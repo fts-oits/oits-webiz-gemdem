@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Phone, Send, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from './ui/Button';
@@ -31,21 +30,21 @@ export const Contact: React.FC = () => {
   const validate = () => {
     const newErrors: typeof errors = {};
     if (!formData.name.trim()) {
-      newErrors.name = 'Full name is required for our records';
+      newErrors.name = 'Full name is required';
     } else if (formData.name.trim().length < 3) {
-      newErrors.name = 'Please enter a valid name (min. 3 characters)';
+      newErrors.name = 'Minimum 3 characters required';
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Work email is required for consultation';
+      newErrors.email = 'Email address is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please provide a valid business email address';
+      newErrors.email = 'Provide a valid business email';
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = 'Please describe your project or inquiry';
+      newErrors.message = 'Please share your inquiry details';
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Please provide more details (min. 10 characters)';
+      newErrors.message = 'Please provide more context (min 10 chars)';
     }
     
     setErrors(newErrors);
@@ -57,7 +56,6 @@ export const Contact: React.FC = () => {
     if (!validate()) return;
     
     setStatus('sending');
-    // Simulate API call with delay
     setTimeout(() => {
       setStatus('success');
       setFormData({ name: '', email: '', message: '' });
@@ -73,7 +71,9 @@ export const Contact: React.FC = () => {
 
   const getInputClass = (field: keyof typeof formData) => {
     const hasError = !!errors[field];
-    return `w-full bg-slate-50 dark:bg-slate-900/40 border ${hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20 animate-shake' : 'border-slate-200 dark:border-slate-700/50 focus:border-blue-500 focus:ring-blue-500/30'} rounded-xl px-4 py-4 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 transition-all duration-300 font-medium`;
+    const isFocused = focusedField === field;
+    return `w-full bg-slate-50 dark:bg-slate-900/40 border transition-all duration-300 rounded-xl px-4 py-4 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none ring-offset-2 dark:ring-offset-slate-900
+      ${hasError ? 'border-red-500 ring-red-500/10 animate-shake' : isFocused ? 'border-blue-600 ring-4 ring-blue-600/5 shadow-[0_0_15px_rgba(37,99,235,0.1)]' : 'border-slate-200 dark:border-slate-800'}`;
   };
 
   return (
@@ -99,7 +99,7 @@ export const Contact: React.FC = () => {
                 { icon: Phone, label: 'Call Us', value: '+880 1234 567890', aria: "Call our office" }
               ].map((item, idx) => (
                 <div key={item.label} className={`flex flex-col gap-3 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'}`} style={{ transitionDelay: `${200 + (idx * 150)}ms` }}>
-                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm">
                     <item.icon className="w-5 h-5" />
                   </div>
                   <div>
@@ -119,8 +119,8 @@ export const Contact: React.FC = () => {
                    <div className="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 mb-8">
                       <CheckCircle2 size={48} />
                    </div>
-                   <h4 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-4">Message Sent!</h4>
-                   <p className="text-slate-600 dark:text-slate-400 text-lg mb-10 leading-relaxed">Thank you for reaching out. A technical lead will reach out within 24 hours.</p>
+                   <h4 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-4 text-center">Inquiry Received</h4>
+                   <p className="text-slate-600 dark:text-slate-400 text-lg mb-10 leading-relaxed text-center">Thanks for reaching out! A technical consultant will respond within 24 hours.</p>
                    <Button variant="outline" onClick={() => setStatus('idle')} className="w-full" aria-label="Send another message">New message</Button>
                 </div>
              ) : (
@@ -128,7 +128,7 @@ export const Contact: React.FC = () => {
                  <div className="space-y-8">
                    <div className="relative group">
                      <label id="label-name" htmlFor="name" className={getLabelClass('name')}>
-                        Name
+                        Full Name
                      </label>
                      <input 
                         type="text" 
@@ -147,8 +147,8 @@ export const Contact: React.FC = () => {
                         }}
                      />
                      {errors.name && (
-                       <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg animate-in slide-in-from-top-1">
-                         <AlertCircle size={14} className="text-red-500 shrink-0" />
+                       <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-lg animate-in slide-in-from-top-1">
+                         <AlertCircle size={14} className="text-red-600 dark:text-red-400" />
                          <span className="text-red-600 dark:text-red-400 text-xs font-bold">{errors.name}</span>
                        </div>
                      )}
@@ -156,7 +156,7 @@ export const Contact: React.FC = () => {
 
                    <div className="relative group">
                      <label id="label-email" htmlFor="email" className={getLabelClass('email')}>
-                        Email
+                        Work Email
                      </label>
                      <input 
                         type="email" 
@@ -175,8 +175,8 @@ export const Contact: React.FC = () => {
                         }}
                      />
                      {errors.email && (
-                       <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg animate-in slide-in-from-top-1">
-                         <AlertCircle size={14} className="text-red-500 shrink-0" />
+                       <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-lg animate-in slide-in-from-top-1">
+                         <AlertCircle size={14} className="text-red-600 dark:text-red-400" />
                          <span className="text-red-600 dark:text-red-400 text-xs font-bold">{errors.email}</span>
                        </div>
                      )}
@@ -185,7 +185,7 @@ export const Contact: React.FC = () => {
                  
                  <div className="relative group">
                    <label id="label-message" htmlFor="message" className={getLabelClass('message')}>
-                      Message
+                      Your Project Idea
                    </label>
                    <textarea 
                       id="message"
@@ -203,8 +203,8 @@ export const Contact: React.FC = () => {
                       }}
                    />
                    {errors.message && (
-                     <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg animate-in slide-in-from-top-1">
-                       <AlertCircle size={14} className="text-red-500 shrink-0" />
+                     <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-lg animate-in slide-in-from-top-1">
+                       <AlertCircle size={14} className="text-red-600 dark:text-red-400" />
                        <span className="text-red-600 dark:text-red-400 text-xs font-bold">{errors.message}</span>
                      </div>
                    )}

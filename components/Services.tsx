@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Globe, Smartphone, Users, Cloud, ArrowUpRight, X, Check, Info } from 'lucide-react';
 import { SERVICES } from '../constants';
@@ -54,12 +53,12 @@ export const Services: React.FC = () => {
           {SERVICES.map((service, index) => (
             <div 
               key={service.id} 
-              className={`group relative bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 rounded-[2rem] p-10 transition-all duration-700 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20 hover:border-blue-400/50 dark:hover:border-blue-600/50 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
+              className={`group relative bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 rounded-[2rem] p-10 transition-all duration-700 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20 hover:border-blue-400/50 dark:hover:border-blue-600/50 cursor-pointer outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
               style={{ transitionDelay: `${index * 100}ms` }}
               onClick={() => setSelectedService(service)}
               role="button"
               tabIndex={0}
-              aria-label={`Service: ${service.title}. Click to view features and details.`}
+              aria-label={`Service: ${service.title}. Click to view details.`}
               aria-haspopup="dialog"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -74,7 +73,6 @@ export const Services: React.FC = () => {
 
               <h4 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{service.title}</h4>
               
-              {/* Description with Tooltip Logic */}
               <div 
                 className="relative mb-6"
                 onMouseEnter={() => setHoveredDescriptionId(service.id)}

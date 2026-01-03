@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Terminal as TerminalIcon } from 'lucide-react';
@@ -43,8 +42,14 @@ export const Hero: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+      }
+    }, { threshold: 0.1 });
+
+    if (heroRef.current) observer.observe(heroRef.current);
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -62,21 +67,21 @@ export const Hero: React.FC = () => {
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
           
           <div className="flex-1 space-y-10 text-center lg:text-left">
-            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest transition-all duration-700 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest transition-all duration-1000 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
               Engineering Excellence
             </div>
             
-            <h1 className={`text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.05] transition-all duration-1000 delay-200 transform ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+            <h1 className={`text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.05] transition-all duration-[1200ms] cubic-bezier(0.16, 1, 0.3, 1) transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               Turning Code into <br className="hidden md:block"/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">Business Growth</span>
             </h1>
             
-            <p className={`text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed transition-all duration-1000 delay-300 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <p className={`text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed transition-all duration-[1200ms] delay-150 cubic-bezier(0.16, 1, 0.3, 1) transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               {TAGLINE}. At {COMPANY_NAME}, we specialize in building high-performance software that solves complex problems and delights users.
             </p>
 
-            <div className={`flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start transition-all duration-1000 delay-400 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <div className={`flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start transition-all duration-[1200ms] delay-300 cubic-bezier(0.16, 1, 0.3, 1) transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <Link to="/contact">
                 <Button 
                   size="lg" 
@@ -96,7 +101,7 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Trusted By Section */}
-            <div className={`pt-10 transition-all duration-1000 delay-600 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <div className={`pt-10 transition-all duration-[1200ms] delay-500 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-6">Trusted By Emerging Leaders</p>
               <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-8 gap-y-6">
                 {TRUSTED_BY.map((partner) => (
@@ -113,7 +118,7 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
-          <div className={`flex-1 w-full max-w-2xl transition-all duration-1000 delay-500 transform ${isVisible ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 translate-x-12 scale-95'}`}>
+          <div className={`flex-1 w-full max-w-2xl transition-all duration-[1500ms] delay-300 transform ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
             <div className="relative">
               {/* Coding Terminal Banner */}
               <div className="absolute -top-12 -left-8 md:-left-16 w-full max-w-sm z-20 hidden md:block animate-float">

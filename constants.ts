@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
     category: 'Enterprise Software',
     imageUrl: 'https://images.unsplash.com/photo-1551288049-bbbda5366fd9?auto=format&fit=crop&q=80&w=800&fm=webp',
     description: 'A comprehensive financial analytics dashboard for real-time market tracking.',
-    fullDescription: 'We engineered a low-latency data ingestion pipeline for real-time stock market analysis, providing institutional-grade charting tools to retail investors. The system handles over 10k concurrent data points per second with advanced visualization.',
+    fullDescription: 'We engineered a low-latency data ingestion pipeline for real-time stock market analysis, providing institutional-grade charting tools. The system handles over 10k concurrent data points per second with advanced visualization.',
     technologies: ['React', 'D3.js', 'Node.js', 'PostgreSQL'],
     demoVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     captionsUrl: 'https://storage.googleapis.com/caption-demo/finance.vtt'

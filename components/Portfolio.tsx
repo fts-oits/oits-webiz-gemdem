@@ -334,7 +334,7 @@ const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: a
           </button>
           {project.demoVideoUrl && (
             <button 
-              className="bg-blue-600 text-white px-6 py-2 rounded-full font-bold text-sm shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75 hover:bg-blue-700 flex items-center gap-2 outline-none focus:ring-2 focus:ring-blue-400" 
+              className="bg-blue-600 text-white px-6 py-2 rounded-full font-bold text-sm shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75 hover:bg-blue-700 flex items-center gap-2 outline-none focus:ring-2 focus:ring-blue-400 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)]" 
               onClick={(e) => { e.stopPropagation(); onViewDemo(); }}
             >
               <MonitorPlay size={16} /> Watch Demo
@@ -347,7 +347,7 @@ const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: a
         
         {/* Project Insight Section */}
         <div className="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl mb-6 border border-slate-100 dark:border-slate-700/50 min-h-[96px]">
-           <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 font-medium leading-relaxed">
+           <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 font-medium leading-relaxed italic">
              {project.fullDescription || project.description}
            </p>
         </div>
@@ -491,21 +491,24 @@ export const Portfolio: React.FC = () => {
                   )}
                 </div>
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Technology tag filters">
-                  {allTags.map(tag => (
-                    <button 
-                      key={tag} 
-                      onClick={() => toggleTag(tag)} 
-                      aria-pressed={selectedTags.includes(tag)}
-                      aria-label={`Technology filter: ${tag}`}
-                      className={`px-4 py-1.5 rounded-full text-xs font-bold border transition-all duration-300 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                        selectedTags.includes(tag) 
-                          ? 'bg-blue-600 border-blue-600 text-white shadow-md scale-105' 
-                          : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/50'
-                      }`}
-                    >
-                      {tag}
-                    </button>
-                  ))}
+                  {allTags.map(tag => {
+                    const isTagActive = selectedTags.includes(tag);
+                    return (
+                      <button 
+                        key={tag} 
+                        onClick={() => toggleTag(tag)} 
+                        aria-pressed={isTagActive}
+                        aria-label={`Technology filter: ${tag}`}
+                        className={`px-4 py-1.5 rounded-full text-xs font-bold border transition-all duration-300 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                          isTagActive 
+                            ? 'bg-blue-600 border-blue-600 text-white shadow-md scale-110 rotate-1' 
+                            : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/50'
+                        }`}
+                      >
+                        {tag}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
