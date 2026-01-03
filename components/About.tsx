@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { CheckCircle2, Target, Heart, Users } from 'lucide-react';
 import { SectionId } from '../types';
@@ -6,22 +7,22 @@ const TEAM = [
   {
     name: 'Alex Morgan',
     role: 'CEO & Founder',
-    image: 'https://picsum.photos/400/400?random=20',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400&h=500',
   },
   {
     name: 'Sarah Chen',
     role: 'Lead Architect',
-    image: 'https://picsum.photos/400/400?random=21',
+    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400&h=500',
   },
   {
     name: 'James Wilson',
     role: 'Head of Design',
-    image: 'https://picsum.photos/400/400?random=22',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400&h=500',
   },
   {
     name: 'Maria Garcia',
     role: 'Project Manager',
-    image: 'https://picsum.photos/400/400?random=23',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400&h=500',
   },
 ];
 
@@ -80,8 +81,8 @@ export const About: React.FC = () => {
           <div ref={heroRef} className={`flex-1 w-full relative transition-all duration-1000 ease-out ${isHeroVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
              <div className="relative aspect-square rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-2xl group">
                 <img 
-                  src="https://picsum.photos/800/800?random=15" 
-                  alt="Team collaboration" 
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800" 
+                  alt="OITS Dhaka team collaboration" 
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
@@ -175,7 +176,7 @@ export const About: React.FC = () => {
                 <div className="aspect-[4/5] overflow-hidden bg-slate-200 dark:bg-slate-700">
                   <img 
                     src={member.image} 
-                    alt={member.name}
+                    alt={`${member.name}, ${member.role} at OITS Dhaka`}
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Phone, Send, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from './ui/Button';
@@ -29,13 +30,23 @@ export const Contact: React.FC = () => {
 
   const validate = () => {
     const newErrors: typeof errors = {};
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+    if (!formData.name.trim()) {
+      newErrors.name = 'Full name is required for our records';
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name = 'Please enter a valid name (min. 3 characters)';
     }
-    if (!formData.message.trim()) newErrors.message = 'Message is required';
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Work email is required for consultation';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please provide a valid business email address';
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = 'Please describe your project or inquiry';
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Please provide more details (min. 10 characters)';
+    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -46,7 +57,7 @@ export const Contact: React.FC = () => {
     if (!validate()) return;
     
     setStatus('sending');
-    // Simulate API call
+    // Simulate API call with delay
     setTimeout(() => {
       setStatus('success');
       setFormData({ name: '', email: '', message: '' });
@@ -62,7 +73,7 @@ export const Contact: React.FC = () => {
 
   const getInputClass = (field: keyof typeof formData) => {
     const hasError = !!errors[field];
-    return `w-full bg-slate-50 dark:bg-slate-900/40 border ${hasError ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : 'border-slate-200 dark:border-slate-700/50 focus:border-blue-500 focus:ring-blue-500/30'} rounded-xl px-4 py-4 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 transition-all duration-300 font-medium`;
+    return `w-full bg-slate-50 dark:bg-slate-900/40 border ${hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20 animate-shake' : 'border-slate-200 dark:border-slate-700/50 focus:border-blue-500 focus:ring-blue-500/30'} rounded-xl px-4 py-4 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 transition-all duration-300 font-medium`;
   };
 
   return (
@@ -84,8 +95,8 @@ export const Contact: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
               {[
-                { icon: Mail, label: 'Email Us', value: CONTACT_EMAIL },
-                { icon: Phone, label: 'Call Us', value: '+880 1234 567890' }
+                { icon: Mail, label: 'Email Us', value: CONTACT_EMAIL, aria: `Email us at ${CONTACT_EMAIL}` },
+                { icon: Phone, label: 'Call Us', value: '+880 1234 567890', aria: "Call our office" }
               ].map((item, idx) => (
                 <div key={item.label} className={`flex flex-col gap-3 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'}`} style={{ transitionDelay: `${200 + (idx * 150)}ms` }}>
                   <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
@@ -93,7 +104,9 @@ export const Contact: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">{item.label}</p>
-                    <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{item.value}</p>
+                    <a href={item.label === 'Email Us' ? `mailto:${item.value}` : `tel:${item.value}`} className="text-lg font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors" aria-label={item.aria}>
+                      {item.value}
+                    </a>
                   </div>
                 </div>
               ))}
@@ -108,7 +121,7 @@ export const Contact: React.FC = () => {
                    </div>
                    <h4 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-4">Message Sent!</h4>
                    <p className="text-slate-600 dark:text-slate-400 text-lg mb-10 leading-relaxed">Thank you for reaching out. A technical lead will reach out within 24 hours.</p>
-                   <Button variant="outline" onClick={() => setStatus('idle')} className="w-full">New message</Button>
+                   <Button variant="outline" onClick={() => setStatus('idle')} className="w-full" aria-label="Send another message">New message</Button>
                 </div>
              ) : (
                <form onSubmit={handleSubmit} className="space-y-8" noValidate>
@@ -120,6 +133,7 @@ export const Contact: React.FC = () => {
                      <input 
                         type="text" 
                         id="name"
+                        autoComplete="name"
                         aria-labelledby="label-name"
                         aria-invalid={!!errors.name}
                         className={getInputClass('name')}
@@ -147,6 +161,7 @@ export const Contact: React.FC = () => {
                      <input 
                         type="email" 
                         id="email"
+                        autoComplete="email"
                         aria-labelledby="label-email"
                         aria-invalid={!!errors.email}
                         className={getInputClass('email')}
@@ -201,6 +216,7 @@ export const Contact: React.FC = () => {
                    size="lg" 
                    className="w-full text-lg shadow-xl shadow-blue-600/20"
                    disabled={status === 'sending'}
+                   aria-label="Submit project consultation form"
                  >
                    {status === 'sending' ? 'Sending...' : 'Send Message'}
                  </Button>
@@ -209,6 +225,16 @@ export const Contact: React.FC = () => {
           </div>
         </div>
       </div>
+      <style>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-4px); }
+          75% { transform: translateX(4px); }
+        }
+        .animate-shake {
+          animation: shake 0.2s ease-in-out 0s 2;
+        }
+      `}</style>
     </section>
   );
 };

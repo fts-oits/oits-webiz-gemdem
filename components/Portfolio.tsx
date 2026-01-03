@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-// Added missing icons: Play, Pause, Volume2, VolumeX
 import { X, Tag, MonitorPlay, RotateCcw, Check, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { PROJECTS } from '../constants';
 import { Project } from '../types';
@@ -7,6 +6,8 @@ import { Button } from './ui/Button';
 
 // --- Types & Constants ---
 const ALL_CATEGORY = 'All Categories';
+const STORAGE_KEY_CATEGORIES = 'portfolio-filter-categories';
+const STORAGE_KEY_TAGS = 'portfolio-filter-tags';
 
 const formatTime = (seconds: number): string => {
   if (!seconds || isNaN(seconds)) return "0:00";
@@ -237,11 +238,14 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, autoPlay = false, 
 };
 
 // --- Card Component ---
-const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags }: any) => {
+const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: any) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   
   return (
-    <div className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
+    <div 
+      className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 animate-in fade-in zoom-in-95 duration-700 fill-mode-forwards"
+      style={{ animationDelay: `${index * 50}ms` }}
+    >
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-200 dark:bg-slate-800 cursor-pointer" onClick={onClick}>
         {!imageLoaded && <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 animate-pulse"></div>}
         <img 
@@ -292,13 +296,33 @@ const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags }: any) => 
 
 // --- Portfolio ---
 export const Portfolio: React.FC = () => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  // Persistence Loading
+  const initialCategories = useMemo(() => {
+    const saved = localStorage.getItem(STORAGE_KEY_CATEGORIES);
+    return saved ? JSON.parse(saved) : [];
+  }, []);
+
+  const initialTags = useMemo(() => {
+    const saved = localStorage.getItem(STORAGE_KEY_TAGS);
+    return saved ? JSON.parse(saved) : [];
+  }, []);
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(initialCategories);
+  const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
   const [loading, setLoading] = useState(true);
   const [selectedProjectState, setSelectedProjectState] = useState<{ project: Project; autoPlay: boolean } | null>(null);
 
+  // Persistence Saving
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1200);
+    localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(selectedCategories));
+  }, [selectedCategories]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_TAGS, JSON.stringify(selectedTags));
+  }, [selectedTags]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 800);
     return () => clearTimeout(timer);
   }, []);
 
@@ -335,19 +359,23 @@ export const Portfolio: React.FC = () => {
     setSelectedTags([]);
   };
 
+  // We use a unique key for the results grid to trigger CSS entrance animations on filter change
+  const filterKey = `${selectedCategories.join('-')}:${selectedTags.join('-')}`;
+
   return (
-    <section id="portfolio" className="py-24 bg-slate-50 dark:bg-slate-950 min-h-screen">
+    <section id="portfolio" className="py-24 bg-slate-50 dark:bg-slate-950 min-h-screen transition-colors duration-300">
       <div className="container mx-auto px-6">
         <div className="mb-12 flex flex-col lg:flex-row gap-8">
-           <div className="w-full lg:w-64 space-y-4">
+           <aside className="w-full lg:w-64 space-y-4">
               <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Categories</h4>
-              <div className="flex lg:flex-col gap-2 overflow-x-auto no-scrollbar pb-2 lg:pb-0" role="group" aria-label="Project category filter">
+              <nav className="flex lg:flex-col gap-2 overflow-x-auto no-scrollbar pb-2 lg:pb-0" role="group" aria-label="Project category filter">
                 {categories.map(cat => (
                   <button 
                     key={cat} 
                     onClick={() => toggleCategory(cat)} 
                     aria-pressed={cat === ALL_CATEGORY ? selectedCategories.length === 0 : selectedCategories.includes(cat)}
-                    className={`px-4 py-2 rounded-xl text-sm font-semibold text-left whitespace-nowrap transition-all duration-300 relative group flex items-center justify-between ${
+                    aria-label={`Filter by ${cat}`}
+                    className={`px-4 py-2 rounded-xl text-sm font-semibold text-left whitespace-nowrap transition-all duration-300 relative group flex items-center justify-between outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                       (cat === ALL_CATEGORY ? selectedCategories.length === 0 : selectedCategories.includes(cat))
                         ? 'bg-slate-900 dark:bg-blue-600 text-white shadow-lg' 
                         : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -357,8 +385,9 @@ export const Portfolio: React.FC = () => {
                     {(cat !== ALL_CATEGORY && selectedCategories.includes(cat)) && <Check size={14} className="ml-2" />}
                   </button>
                 ))}
-              </div>
-           </div>
+              </nav>
+           </aside>
+           
            <div className="flex-1">
               <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 mb-8 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
@@ -369,10 +398,10 @@ export const Portfolio: React.FC = () => {
                   {(selectedTags.length > 0 || selectedCategories.length > 0) && (
                     <button 
                       onClick={clearFilters} 
-                      className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1 transition-all"
-                      aria-label="Clear all filters"
+                      className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1 transition-all group"
+                      aria-label="Reset all active filters"
                     >
-                      <RotateCcw size={12} /> Reset all filters
+                      <RotateCcw size={12} className="group-hover:rotate-[-120deg] transition-transform" /> Reset all filters
                     </button>
                   )}
                 </div>
@@ -383,7 +412,7 @@ export const Portfolio: React.FC = () => {
                       onClick={() => toggleTag(tag)} 
                       aria-pressed={selectedTags.includes(tag)}
                       aria-label={`Filter by ${tag}`}
-                      className={`px-3 py-1 rounded-full text-xs font-bold border transition-all duration-300 active:scale-95 ${
+                      className={`px-3 py-1 rounded-full text-xs font-bold border transition-all duration-300 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                         selectedTags.includes(tag) 
                           ? 'bg-blue-600 border-blue-600 text-white shadow-md scale-105' 
                           : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-400 dark:hover:border-blue-500'
@@ -395,26 +424,30 @@ export const Portfolio: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]">
+              <div key={filterKey} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]">
                 {loading ? (
                   Array.from({ length: 6 }).map((_, i) => <ProjectSkeleton key={i} />)
                 ) : filteredProjects.length > 0 ? (
-                  filteredProjects.map((project) => (
+                  filteredProjects.map((project, index) => (
                     <ProjectCard 
                       key={project.id} 
                       project={project} 
+                      index={index}
                       highlightedTags={selectedTags} 
                       onClick={() => setSelectedProjectState({ project, autoPlay: false })} 
                       onViewDemo={() => setSelectedProjectState({ project, autoPlay: true })} 
                     />
                   ))
                 ) : (
-                  <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800">
-                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 mb-6">
-                      <X size={32} />
+                  <div className="col-span-full flex flex-col items-center justify-center py-24 bg-white dark:bg-slate-900 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-500">
+                    <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 dark:text-slate-600 mb-8">
+                      <RotateCcw size={40} className="animate-pulse" />
                     </div>
-                    <p className="text-slate-500 dark:text-slate-400 mb-6 font-medium text-lg">No projects match the selected criteria.</p>
-                    <Button variant="outline" size="sm" onClick={clearFilters} className="rounded-full">Reset All Filters</Button>
+                    <h5 className="text-xl font-bold text-slate-900 dark:text-white mb-3">No matching results</h5>
+                    <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-sm text-center">We couldn't find any projects matching your current filter selection. Try adjusting your categories or tags.</p>
+                    <Button variant="outline" size="md" onClick={clearFilters} className="rounded-full px-10">
+                      Reset Filters
+                    </Button>
                   </div>
                 )}
               </div>

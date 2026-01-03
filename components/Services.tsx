@@ -4,6 +4,7 @@ import { Globe, Smartphone, Users, Cloud, ArrowUpRight, X, Check } from 'lucide-
 import { SERVICES } from '../constants';
 import { SectionId, Service } from '../types';
 import { Button } from './ui/Button';
+import { Link } from 'react-router-dom';
 
 const iconMap: Record<string, React.ReactNode> = {
   Globe: <Globe className="w-6 h-6" />,
@@ -54,6 +55,11 @@ export const Services: React.FC = () => {
               key={service.id} 
               className={`group relative bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 rounded-[2rem] p-10 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20 hover:border-blue-400/50 dark:hover:border-blue-600/50 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
               style={{ transitionDelay: `${index * 100}ms` }}
+              onClick={() => setSelectedService(service)}
+              role="button"
+              tabIndex={0}
+              aria-label={`Explore more about ${service.title}`}
+              onKeyDown={(e) => e.key === 'Enter' && setSelectedService(service)}
             >
               <div className="w-14 h-14 shrink-0 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center text-slate-900 dark:text-white shadow-sm mb-8 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 group-hover:scale-110 group-hover:animate-subtle-bounce">
                 {iconMap[service.icon]}
@@ -76,8 +82,7 @@ export const Services: React.FC = () => {
               <div className="space-y-4">
                 <div className="h-px w-full bg-slate-200 dark:bg-slate-700/50" />
                 <button 
-                  onClick={() => setSelectedService(service)}
-                  className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/btn uppercase tracking-widest"
+                  className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/btn uppercase tracking-widest outline-none focus:ring-2 focus:ring-blue-500 rounded px-1"
                 >
                   Learn More <ArrowUpRight size={14} className="transition-transform group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1" />
                 </button>
@@ -95,6 +100,7 @@ export const Services: React.FC = () => {
               <button 
                 onClick={() => setSelectedService(null)}
                 className="absolute top-8 right-8 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors text-slate-500 dark:text-slate-400"
+                aria-label="Close service details"
               >
                 <X size={24} />
               </button>
@@ -119,9 +125,9 @@ export const Services: React.FC = () => {
 
               <div className="mt-10 flex gap-4">
                 <Link to="/contact" className="flex-1" onClick={() => setSelectedService(null)}>
-                  <Button variant="primary" className="w-full">Consult Now</Button>
+                  <Button variant="primary" className="w-full" aria-label={`Start project consultation for ${selectedService.title}`}>Consult Now</Button>
                 </Link>
-                <Button onClick={() => setSelectedService(null)} variant="outline">Close</Button>
+                <Button onClick={() => setSelectedService(null)} variant="outline" aria-label="Close modal">Close</Button>
               </div>
             </div>
           </div>
@@ -130,4 +136,3 @@ export const Services: React.FC = () => {
     </section>
   );
 };
-import { Link } from 'react-router-dom';

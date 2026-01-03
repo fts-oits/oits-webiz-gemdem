@@ -20,10 +20,11 @@ async function deploy() {
 }`;
 
 const TRUSTED_BY = [
-  { name: 'TechFlow', color: 'text-slate-400' },
-  { name: 'CloudScale', color: 'text-slate-400' },
-  { name: 'InnoVate', color: 'text-slate-400' },
-  { name: 'Nexus', color: 'text-slate-400' },
+  { name: 'TECHFLOW', icon: 'TF' },
+  { name: 'CLOUDSCALE', icon: 'CS' },
+  { name: 'INNOVATE', icon: 'IN' },
+  { name: 'NEXUS', icon: 'NX' },
+  { name: 'VANTAGE', icon: 'VT' },
 ];
 
 export const Hero: React.FC = () => {
@@ -81,13 +82,14 @@ export const Hero: React.FC = () => {
                   size="lg" 
                   variant="primary"
                   className="group transform transition-all duration-300 hover:scale-105 px-10"
+                  aria-label="Request a quote for your software project"
                 >
                   Request a Quote
                   <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
               <Link to="/portfolio">
-                <Button variant="outline" size="lg" className="group">
+                <Button variant="outline" size="lg" className="group" aria-label="View our software development portfolio">
                   Our Portfolio
                 </Button>
               </Link>
@@ -95,12 +97,17 @@ export const Hero: React.FC = () => {
 
             {/* Trusted By Section */}
             <div className={`pt-10 transition-all duration-1000 delay-600 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-              <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-4">Trusted By Emerging Leaders</p>
-              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-8 opacity-40 grayscale">
+              <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-6">Trusted By Emerging Leaders</p>
+              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-x-8 gap-y-6">
                 {TRUSTED_BY.map((partner) => (
-                  <span key={partner.name} className="text-xl font-black text-slate-900 dark:text-white tracking-tighter">
-                    {partner.name}
-                  </span>
+                  <div key={partner.name} className="flex items-center gap-2 group cursor-default">
+                    <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-500 transition-all group-hover:bg-blue-600 group-hover:text-white group-hover:scale-110">
+                      {partner.icon}
+                    </div>
+                    <span className="text-sm font-bold text-slate-400 dark:text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                      {partner.name}
+                    </span>
+                  </div>
                 ))}
               </div>
             </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Terminal, Sun, Moon } from 'lucide-react';
@@ -29,6 +28,18 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const id = href.substring(1);
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setIsMobileMenuOpen(false);
+      }
+    }
+  };
+
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
@@ -55,6 +66,7 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
             <Link 
               key={item.label} 
               to={item.href}
+              onClick={(e) => handleLinkClick(e as any, item.href)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 active:scale-95 ${
                 location.pathname === item.href 
                   ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800' 
@@ -113,7 +125,10 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
               <Link 
                 key={item.label} 
                 to={item.href}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => {
+                  handleLinkClick(e as any, item.href);
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`px-4 py-3 rounded-lg text-lg font-medium transition-all active:scale-95 ${
                    location.pathname === item.href 
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800' 
