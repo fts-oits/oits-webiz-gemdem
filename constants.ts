@@ -89,8 +89,10 @@ export const PROJECTS: Project[] = [
     category: 'Enterprise Software',
     imageUrl: 'https://images.unsplash.com/photo-1551288049-bbbda5366fd9?auto=format&fit=crop&q=80&w=800&fm=webp',
     description: 'A comprehensive financial analytics dashboard for real-time market tracking.',
+    fullDescription: 'We engineered a low-latency data ingestion pipeline for real-time stock market analysis, providing institutional-grade charting tools to retail investors. The system handles over 10k concurrent data points per second.',
     technologies: ['React', 'D3.js', 'Node.js', 'PostgreSQL'],
     demoVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    captionsUrl: '#placeholder-vtt-1'
   },
   {
     id: '2',
@@ -98,8 +100,10 @@ export const PROJECTS: Project[] = [
     category: 'Mobile Application',
     imageUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800&fm=webp',
     description: 'A HIPAA-compliant telemedicine platform with secure video conferencing.',
+    fullDescription: 'Our mobile team focused on high-security standards (HIPAA) and low-latency video streaming to connect patients with specialists globally. Features include encrypted health records and appointment management.',
     technologies: ['Flutter', 'Firebase', 'WebRTC'],
     demoVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    captionsUrl: '#placeholder-vtt-2'
   },
   {
     id: '3',
@@ -107,8 +111,43 @@ export const PROJECTS: Project[] = [
     category: 'Supply Chain',
     imageUrl: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=800&fm=webp',
     description: 'AI-driven logistics platform managing complex global supply chains.',
+    fullDescription: 'Integrating AI for predictive route optimization, this platform reduced fuel costs for a major shipping firm by 14% in its first quarter of operation.',
     technologies: ['Next.js', 'Python', 'AWS SageMaker'],
     demoVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+    captionsUrl: '#placeholder-vtt-3'
+  },
+  {
+    id: '4',
+    title: 'EduStream Pro',
+    category: 'E-Learning',
+    imageUrl: 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&q=80&w=800&fm=webp',
+    description: 'Cloud-based learning management system for universities.',
+    fullDescription: 'A scalable LMS built to support over 50,000 students. Includes real-time testing, automated grading, and a collaborative virtual classroom module.',
+    technologies: ['Vue.js', 'Firebase', 'Node.js', 'Redis'],
+    demoVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
+    captionsUrl: '#placeholder-vtt-4'
+  },
+  {
+    id: '5',
+    title: 'EcoTrack IoT',
+    category: 'Smart Industry',
+    imageUrl: 'https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&q=80&w=800&fm=webp',
+    description: 'Industrial IoT monitoring for sustainable manufacturing.',
+    fullDescription: 'Connects factory floor sensors to a central dashboard to monitor carbon footprint and energy waste in real-time. Built with a focus on edge computing.',
+    technologies: ['Angular', 'Go', 'MQTT', 'Docker'],
+    demoVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+    captionsUrl: '#placeholder-vtt-5'
+  },
+  {
+    id: '6',
+    title: 'Nexus Real Estate VR',
+    category: 'Real Estate',
+    imageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800&fm=webp',
+    description: 'Web-based VR walkthroughs for luxury property listings.',
+    fullDescription: 'Allowing potential buyers to explore properties from their browser with high-fidelity 3D rendering and interactive floor plans.',
+    technologies: ['React', 'Three.js', 'WebGL', 'AWS S3'],
+    demoVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackAds.mp4',
+    captionsUrl: '#placeholder-vtt-6'
   }
 ];
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { X, Tag, MonitorPlay, RotateCcw, Check, Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { X, Tag, MonitorPlay, RotateCcw, Check, Play, Pause, Volume2, VolumeX, Info } from 'lucide-react';
 import { PROJECTS } from '../constants';
 import { Project } from '../types';
 import { Button } from './ui/Button';
@@ -131,10 +131,12 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, captionsUrl,
       onMouseLeave={() => isPlaying && setShowControls(false)}
       onKeyDown={(e) => {
         if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+        if (e.key === 'm') { e.preventDefault(); toggleMute(); }
+        if (e.key === 'Escape') { e.preventDefault(); onClose(); }
       }}
       tabIndex={0}
       role="region"
-      aria-label="Video Player"
+      aria-label="Video Demonstration Player"
     >
       <video
         ref={videoRef}
@@ -149,16 +151,44 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, captionsUrl,
       </video>
 
       <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 px-4 pb-4 pt-20 transition-all duration-300 z-20 flex flex-col gap-4 ${showControls || !isPlaying ? 'opacity-100' : 'opacity-0'}`}>
-        <input type="range" min="0" max={duration || 0} value={currentTime} onChange={handleSeek} className="w-full h-1.5 bg-white/30 rounded-lg appearance-none cursor-pointer accent-blue-500" />
+        <input 
+          type="range" 
+          min="0" 
+          max={duration || 0} 
+          value={currentTime} 
+          onChange={handleSeek} 
+          className="w-full h-1.5 bg-white/30 rounded-lg appearance-none cursor-pointer accent-blue-500"
+          aria-label="Seek video playback"
+        />
         <div className="flex items-center justify-between text-white">
           <div className="flex items-center gap-4">
-            <button onClick={togglePlay} className="p-2 hover:bg-white/20 rounded-full">{isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" />}</button>
+            <button 
+              onClick={togglePlay} 
+              className="p-2 hover:bg-white/20 rounded-full transition-all active:scale-90"
+              aria-label={isPlaying ? "Pause video" : "Play video"}
+            >
+              {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" />}
+            </button>
             <div className="flex items-center gap-2">
-              <button onClick={toggleMute}>{isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}</button>
-              <span className="text-xs font-mono">{formatTime(currentTime)} / {formatTime(duration)}</span>
+              <button 
+                onClick={toggleMute}
+                className="p-1 hover:bg-white/10 rounded-full"
+                aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+              >
+                {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+              </button>
+              <span className="text-xs font-mono tabular-nums" aria-live="polite">
+                {formatTime(currentTime)} / {formatTime(duration)}
+              </span>
             </div>
           </div>
-          <button onClick={onClose} className="px-4 py-1.5 bg-white/10 hover:bg-white/20 rounded-full text-xs font-bold transition-all">Exit</button>
+          <button 
+            onClick={onClose} 
+            className="px-4 py-1.5 bg-white/10 hover:bg-white/20 rounded-full text-xs font-bold transition-all active:scale-95"
+            aria-label="Exit full screen video"
+          >
+            Exit Player
+          </button>
         </div>
       </div>
     </div>
@@ -215,7 +245,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, autoPlay = false, 
                ) : (
                  <div className="relative w-full h-full">
                     <img src={activeProject.imageUrl} alt={activeProject.title} className="w-full h-full object-cover" />
-                    <button onClick={handleClose} className="absolute top-4 right-4 p-2 bg-black/40 rounded-full text-white"><X /></button>
+                    <button onClick={handleClose} className="absolute top-4 right-4 p-2 bg-black/40 rounded-full text-white" aria-label="Close project details"><X /></button>
                     <div className="absolute bottom-0 left-0 right-0 p-8 text-white bg-gradient-to-t from-slate-900">
                       <h3 className="text-3xl font-bold">{activeProject.title}</h3>
                     </div>
@@ -223,10 +253,16 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, autoPlay = false, 
                )}
             </div>
             <div className="p-8">
-              <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-8">{activeProject.fullDescription || activeProject.description}</p>
+              <h4 className="text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest text-xs mb-4 flex items-center gap-2">
+                <Info size={14} /> Project Insight
+              </h4>
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-8 text-lg font-medium">{activeProject.fullDescription || activeProject.description}</p>
+              
+              <div className="h-px w-full bg-slate-100 dark:bg-slate-800 mb-6" />
+              
               <div className="flex flex-wrap gap-2">
                 {activeProject.technologies?.map(tech => (
-                  <span key={tech} className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded text-sm text-slate-700 dark:text-slate-200 font-medium">{tech}</span>
+                  <span key={tech} className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded text-sm text-slate-700 dark:text-slate-200 font-semibold border border-slate-200 dark:border-slate-700">{tech}</span>
                 ))}
               </div>
             </div>
@@ -243,7 +279,7 @@ const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: a
   
   return (
     <div 
-      className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 animate-in fade-in zoom-in-95 duration-700 fill-mode-forwards"
+      className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-1 animate-in fade-in zoom-in-95 fill-mode-forwards"
       style={{ animationDelay: `${index * 50}ms` }}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-200 dark:bg-slate-800 cursor-pointer" onClick={onClick}>
@@ -274,7 +310,14 @@ const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: a
       </div>
       <div className="p-6">
         <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{project.title}</h4>
-        <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 mb-4">{project.description}</p>
+        
+        {/* Separated Insight Section */}
+        <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl mb-4 border border-slate-100 dark:border-slate-700/50">
+           <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 italic">
+             {project.fullDescription || project.description}
+           </p>
+        </div>
+
         <div className="flex flex-wrap gap-1.5">
           {project.technologies?.map((tech: string) => (
             <span 
@@ -296,23 +339,21 @@ const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: a
 
 // --- Portfolio ---
 export const Portfolio: React.FC = () => {
-  // Persistence Loading
-  const initialCategories = useMemo(() => {
+  // Persistence Loading with immediate effect
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEY_CATEGORIES);
     return saved ? JSON.parse(saved) : [];
-  }, []);
+  });
 
-  const initialTags = useMemo(() => {
+  const [selectedTags, setSelectedTags] = useState<string[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEY_TAGS);
     return saved ? JSON.parse(saved) : [];
-  }, []);
+  });
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(initialCategories);
-  const [selectedTags, setSelectedTags] = useState<string[]>(initialTags);
   const [loading, setLoading] = useState(true);
   const [selectedProjectState, setSelectedProjectState] = useState<{ project: Project; autoPlay: boolean } | null>(null);
 
-  // Persistence Saving
+  // Persistence Saving immediately on change
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(selectedCategories));
   }, [selectedCategories]);
@@ -322,7 +363,7 @@ export const Portfolio: React.FC = () => {
   }, [selectedTags]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
+    const timer = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(timer);
   }, []);
 
@@ -369,22 +410,25 @@ export const Portfolio: React.FC = () => {
            <aside className="w-full lg:w-64 space-y-4">
               <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Categories</h4>
               <nav className="flex lg:flex-col gap-2 overflow-x-auto no-scrollbar pb-2 lg:pb-0" role="group" aria-label="Project category filter">
-                {categories.map(cat => (
-                  <button 
-                    key={cat} 
-                    onClick={() => toggleCategory(cat)} 
-                    aria-pressed={cat === ALL_CATEGORY ? selectedCategories.length === 0 : selectedCategories.includes(cat)}
-                    aria-label={`Filter by ${cat}`}
-                    className={`px-4 py-2 rounded-xl text-sm font-semibold text-left whitespace-nowrap transition-all duration-300 relative group flex items-center justify-between outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                      (cat === ALL_CATEGORY ? selectedCategories.length === 0 : selectedCategories.includes(cat))
-                        ? 'bg-slate-900 dark:bg-blue-600 text-white shadow-lg' 
-                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                    }`}
-                  >
-                    {cat}
-                    {(cat !== ALL_CATEGORY && selectedCategories.includes(cat)) && <Check size={14} className="ml-2" />}
-                  </button>
-                ))}
+                {categories.map(cat => {
+                  const isActive = (cat === ALL_CATEGORY ? selectedCategories.length === 0 : selectedCategories.includes(cat));
+                  return (
+                    <button 
+                      key={cat} 
+                      onClick={() => toggleCategory(cat)} 
+                      aria-pressed={isActive}
+                      aria-label={`Filter by category ${cat}`}
+                      className={`px-4 py-2 rounded-xl text-sm font-semibold text-left whitespace-nowrap transition-all duration-300 relative group flex items-center justify-between outline-none focus-visible:ring-2 focus-visible:ring-blue-500 active:scale-90 ${
+                        isActive
+                          ? 'bg-slate-900 dark:bg-blue-600 text-white shadow-lg scale-105' 
+                          : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      {cat}
+                      {(cat !== ALL_CATEGORY && isActive) && <Check size={14} className="ml-2 animate-in zoom-in-50" />}
+                    </button>
+                  );
+                })}
               </nav>
            </aside>
            
@@ -399,7 +443,7 @@ export const Portfolio: React.FC = () => {
                     <button 
                       onClick={clearFilters} 
                       className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1 transition-all group"
-                      aria-label="Reset all active filters"
+                      aria-label="Reset all active portfolio filters"
                     >
                       <RotateCcw size={12} className="group-hover:rotate-[-120deg] transition-transform" /> Reset all filters
                     </button>
@@ -411,8 +455,8 @@ export const Portfolio: React.FC = () => {
                       key={tag} 
                       onClick={() => toggleTag(tag)} 
                       aria-pressed={selectedTags.includes(tag)}
-                      aria-label={`Filter by ${tag}`}
-                      className={`px-3 py-1 rounded-full text-xs font-bold border transition-all duration-300 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                      aria-label={`Technology tag: ${tag}`}
+                      className={`px-3 py-1 rounded-full text-xs font-bold border transition-all duration-300 active:scale-90 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                         selectedTags.includes(tag) 
                           ? 'bg-blue-600 border-blue-600 text-white shadow-md scale-105' 
                           : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-400 dark:hover:border-blue-500'
