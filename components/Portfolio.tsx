@@ -101,6 +101,7 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, captionsUrl,
         if (e.key === ' ') { e.preventDefault(); togglePlay(); }
         if (e.key === 'm') { e.preventDefault(); toggleMute(); }
         if (e.key === 'c') { e.preventDefault(); setCaptionsEnabled(!captionsEnabled); }
+        if (e.key === 'Escape') onClose();
       }}
       tabIndex={0}
       role="region"
@@ -110,28 +111,56 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, captionsUrl,
         {captionsUrl && <track kind="captions" src={captionsUrl} srcLang="en" label="English" default={captionsEnabled} />}
       </video>
 
-      <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 p-4 transition-opacity duration-300 ${showControls || !isPlaying ? 'opacity-100' : 'opacity-0'}`}>
-        <input type="range" min="0" max={duration || 0} value={currentTime} onChange={handleSeek} className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-blue-500 mb-4" aria-label="Seek Video" />
+      <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 px-6 pb-6 pt-12 transition-opacity duration-300 z-10 ${showControls || !isPlaying ? 'opacity-100' : 'opacity-0'}`}>
+        <input 
+          type="range" 
+          min="0" 
+          max={duration || 0} 
+          value={currentTime} 
+          onChange={handleSeek} 
+          className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-blue-500 mb-6" 
+          aria-label="Seek Video" 
+        />
         <div className="flex items-center justify-between text-white">
-          <div className="flex items-center gap-4">
-            <button onClick={togglePlay} className="p-1 hover:bg-white/10 rounded" aria-label={isPlaying ? "Pause" : "Play"}>
-              {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+          <div className="flex items-center gap-6">
+            <button onClick={togglePlay} className="p-2 hover:bg-white/20 rounded-full transition-all active:scale-90" aria-label={isPlaying ? "Pause" : "Play"}>
+              {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" />}
             </button>
-            <div className="flex items-center gap-2 group/vol">
-              <button onClick={toggleMute} aria-label={isMuted ? "Unmute" : "Mute"}>
-                {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
+            <div className="flex items-center gap-3 group/vol">
+              <button onClick={toggleMute} className="p-1 hover:bg-white/10 rounded" aria-label={isMuted ? "Unmute" : "Mute"}>
+                {isMuted || volume === 0 ? <VolumeX size={20} /> : <Volume2 size={20} />}
               </button>
-              <input type="range" min="0" max="1" step="0.05" value={isMuted ? 0 : volume} onChange={handleVolumeChange} className="w-0 group-hover/vol:w-16 transition-all duration-300 h-1 bg-white/30 rounded appearance-none accent-blue-500" aria-label="Volume" />
+              <input 
+                type="range" 
+                min="0" 
+                max="1" 
+                step="0.05" 
+                value={isMuted ? 0 : volume} 
+                onChange={handleVolumeChange} 
+                className="w-24 h-1 bg-white/30 rounded appearance-none accent-blue-500 cursor-pointer" 
+                aria-label="Volume Slider" 
+              />
             </div>
-            <span className="text-xs font-mono">{formatTime(currentTime)} / {formatTime(duration)}</span>
+            <span className="text-sm font-mono tracking-tight">{formatTime(currentTime)} / {formatTime(duration)}</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {captionsUrl && (
-              <button onClick={() => setCaptionsEnabled(!captionsEnabled)} className={`p-1 rounded ${captionsEnabled ? 'text-blue-400' : 'text-white/50'}`} aria-label="Toggle Captions" aria-pressed={captionsEnabled}>
-                <Subtitles size={18} />
+              <button 
+                onClick={() => setCaptionsEnabled(!captionsEnabled)} 
+                className={`p-2 rounded-lg transition-all ${captionsEnabled ? 'text-blue-400 bg-white/10' : 'text-white/50 hover:text-white'}`} 
+                aria-label="Toggle Captions" 
+                aria-pressed={captionsEnabled}
+              >
+                <Subtitles size={20} />
               </button>
             )}
-            <button onClick={onClose} className="text-xs font-bold uppercase tracking-widest px-3 py-1 bg-white/10 rounded hover:bg-white/20 transition-colors">Close</button>
+            <button 
+              onClick={onClose} 
+              className="text-xs font-bold uppercase tracking-widest px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors border border-white/20"
+              aria-label="Exit Player"
+            >
+              Exit
+            </button>
           </div>
         </div>
       </div>
@@ -141,27 +170,67 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, captionsUrl,
 
 const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: any) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setIsVisible(true);
+    }, { threshold: 0.1 });
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-2 animate-in fade-in zoom-in-95 fill-mode-forwards" style={{ animationDelay: `${index * 50}ms` }}>
+    <div 
+      ref={cardRef}
+      className={`group bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl transition-all duration-700 transform ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'}`}
+      style={{ transitionDelay: `${index * 80}ms` }}
+    >
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-200 dark:bg-slate-800 cursor-pointer" onClick={onClick}>
-        <img src={project.imageUrl} alt={project.title} onLoad={() => setImageLoaded(true)} className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`} />
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col gap-3 items-center justify-center bg-slate-900/60 backdrop-blur-sm">
-          <button className="bg-white text-slate-900 px-6 py-2.5 rounded-full font-bold text-xs shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-blue-600 hover:text-white" onClick={(e) => { e.stopPropagation(); onClick(); }}>Explore Case Study</button>
+        <img 
+          src={project.imageUrl} 
+          alt={project.title} 
+          loading="lazy"
+          onLoad={() => setImageLoaded(true)} 
+          className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`} 
+        />
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col gap-4 items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+          <button 
+            className="bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-xs shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-blue-600 hover:text-white active:scale-95" 
+            onClick={(e) => { e.stopPropagation(); onClick(); }}
+          >
+            Explore Case Study
+          </button>
           {project.demoVideoUrl && (
-            <button className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold text-xs shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75 hover:bg-blue-700 hover:scale-105 hover:shadow-blue-500/50 flex items-center gap-2" onClick={(e) => { e.stopPropagation(); onViewDemo(); }}>
-              <MonitorPlay size={16} /> Watch Demo
+            <button 
+              className="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-xs shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75 hover:bg-blue-700 hover:scale-105 hover:shadow-blue-500/50 flex items-center gap-2 active:scale-95" 
+              onClick={(e) => { e.stopPropagation(); onViewDemo(); }}
+            >
+              <MonitorPlay size={18} /> Watch Demo
             </button>
           )}
         </div>
       </div>
-      <div className="p-6">
-        <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-600 transition-colors">{project.title}</h4>
-        <div className="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl mb-6 border border-slate-100 dark:border-slate-700/50 min-h-[96px]">
-           <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-3 font-medium italic">{project.fullDescription || project.description}</p>
+      <div className="p-8">
+        <h4 className="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-600 transition-colors leading-tight">{project.title}</h4>
+        <div className="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl mb-6 border border-slate-100 dark:border-slate-700/50 min-h-[100px] flex items-center">
+           <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed font-medium italic">
+             {project.fullDescription || project.description}
+           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {project.technologies?.map((tech: string) => (
-            <span key={tech} className={`text-[10px] px-2.5 py-1 rounded-md border transition-all duration-300 font-bold tracking-tight shadow-sm ${highlightedTags.includes(tech) ? 'bg-blue-600 border-blue-600 text-white scale-110' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'}`}>{tech}</span>
+            <span 
+              key={tech} 
+              className={`text-[11px] px-3 py-1 rounded-lg border transition-all duration-300 font-bold tracking-tight shadow-sm ${
+                highlightedTags.includes(tech) 
+                  ? 'bg-blue-600 border-blue-600 text-white scale-110 shadow-blue-500/20 ring-2 ring-blue-500/10' 
+                  : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:border-blue-400 dark:hover:border-blue-500'
+              }`}
+            >
+              {tech}
+            </span>
           ))}
         </div>
       </div>
@@ -208,17 +277,22 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
   return (
     <section id="portfolio" className="py-24 bg-slate-50 dark:bg-slate-950 min-h-screen transition-colors duration-300">
       <div className="container mx-auto px-6">
-        <div className="mb-12 flex flex-col lg:flex-row gap-8">
+        <div className="mb-16 flex flex-col lg:flex-row gap-12">
            {!limit && (
-             <aside className="w-full lg:w-72 space-y-6">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Verticals</h4>
-                <nav className="flex lg:flex-col gap-2 overflow-x-auto no-scrollbar pb-2">
+             <aside className="w-full lg:w-80 space-y-8">
+                <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] mb-6">Verticals</h4>
+                <nav className="flex lg:flex-col gap-3 overflow-x-auto no-scrollbar pb-2" role="group" aria-label="Vertical Filter">
                   {categories.map(cat => {
                     const active = cat === ALL_CATEGORY ? selectedCategories.length === 0 : selectedCategories.includes(cat);
                     return (
-                      <button key={cat} onClick={() => toggleCategory(cat)} aria-pressed={active} className={`px-4 py-2.5 rounded-xl text-sm font-semibold text-left whitespace-nowrap transition-all border ${active ? 'bg-slate-900 dark:bg-blue-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-600 border-slate-200 dark:border-slate-800'}`}>
+                      <button 
+                        key={cat} 
+                        onClick={() => toggleCategory(cat)} 
+                        aria-pressed={active} 
+                        className={`px-5 py-3 rounded-2xl text-sm font-bold text-left whitespace-nowrap transition-all border outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 active:scale-[0.97] ${active ? 'bg-slate-900 dark:bg-blue-600 text-white shadow-xl border-transparent translate-x-1' : 'bg-white dark:bg-slate-900 text-slate-600 border-slate-200 dark:border-slate-800 hover:border-blue-300'}`}
+                      >
                         {cat}
-                        {active && cat !== ALL_CATEGORY && <Check size={14} className="ml-2 inline" />}
+                        {active && cat !== ALL_CATEGORY && <Check size={16} className="ml-auto inline-block align-middle" />}
                       </button>
                     );
                   })}
@@ -227,43 +301,102 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
            )}
            <div className="flex-1">
               {!limit && (
-                <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 mb-10 shadow-sm relative overflow-hidden">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-2"><Tag size={18} className="text-blue-500"/><span className="font-bold text-lg">Tech Filters</span></div>
-                    {(selectedTags.length > 0 || selectedCategories.length > 0) && <button onClick={() => { setSelectedCategories([]); setSelectedTags([]); }} className="text-xs text-blue-600 flex items-center gap-2 font-bold"><RotateCcw size={12}/> Reset</button>}
+                <div className="bg-white dark:bg-slate-900 p-10 rounded-3xl border border-slate-200 dark:border-slate-800 mb-12 shadow-sm relative overflow-hidden group/filter">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400">
+                        <Tag size={20}/>
+                      </div>
+                      <span className="font-black text-xl tracking-tight text-slate-900 dark:text-white">Technology Filters</span>
+                    </div>
+                    {(selectedTags.length > 0 || selectedCategories.length > 0) && (
+                      <button 
+                        onClick={() => { setSelectedCategories([]); setSelectedTags([]); }} 
+                        className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-2 font-black uppercase tracking-widest hover:underline px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-full"
+                      >
+                        <RotateCcw size={14}/> Reset Filters
+                      </button>
+                    )}
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-3" role="group" aria-label="Tech Stack Filter">
                     {allTags.map(tag => {
                       const active = selectedTags.includes(tag);
-                      return <button key={tag} onClick={() => toggleTag(tag)} aria-pressed={active} className={`px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${active ? 'bg-blue-600 border-blue-600 text-white scale-110' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600'}`}>{tag}</button>
+                      return (
+                        <button 
+                          key={tag} 
+                          onClick={() => toggleTag(tag)} 
+                          aria-pressed={active} 
+                          className={`px-5 py-2 rounded-full text-xs font-black border transition-all active:scale-90 outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 ${active ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:border-blue-400'}`}
+                        >
+                          {tag}
+                        </button>
+                      );
                     })}
                   </div>
                 </div>
               )}
-              <div key={limit ? 'home' : 'page'} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]">
+              <div key={limit ? 'home' : 'page'} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 min-h-[500px]">
                 {loading ? [1,2,3].map(i => <ProjectSkeleton key={i}/>) : filteredProjects.map((p, i) => <ProjectCard key={p.id} project={p} index={i} highlightedTags={selectedTags} onClick={() => setModalState({ project: p, autoPlay: false })} onViewDemo={() => setModalState({ project: p, autoPlay: true })} />)}
               </div>
            </div>
         </div>
       </div>
       {modalState && (
-        <div className="fixed inset-0 z-[101] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setModalState(null)}/>
-          <div className="relative w-full max-w-5xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="relative aspect-video bg-black">
+        <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 sm:p-8">
+          <div className="absolute inset-0 bg-slate-900/95 backdrop-blur-md animate-in fade-in duration-500" onClick={() => setModalState(null)}/>
+          <div className="relative w-full max-w-6xl bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-500 max-h-[90vh] flex flex-col pointer-events-auto">
+            <div className="relative aspect-video bg-black flex-shrink-0">
               {modalState.autoPlay && modalState.project.demoVideoUrl ? (
-                <CustomVideoPlayer src={modalState.project.demoVideoUrl} captionsUrl={modalState.project.captionsUrl} poster={modalState.project.imageUrl} onClose={() => setModalState({ ...modalState, autoPlay: false })} />
+                <CustomVideoPlayer 
+                  src={modalState.project.demoVideoUrl} 
+                  captionsUrl={modalState.project.captionsUrl} 
+                  poster={modalState.project.imageUrl} 
+                  onClose={() => setModalState({ ...modalState, autoPlay: false })} 
+                />
               ) : (
-                <div className="relative w-full h-full">
-                  <img src={modalState.project.imageUrl} className="w-full h-full object-cover"/>
-                  <button onClick={() => setModalState(null)} className="absolute top-4 right-4 p-2 bg-black/40 rounded-full text-white"><X/></button>
-                  <div className="absolute bottom-0 left-0 right-0 p-8 text-white bg-gradient-to-t from-slate-900">
-                    <h3 className="text-3xl font-bold">{modalState.project.title}</h3>
+                <div className="relative w-full h-full group/modal-img">
+                  <img src={modalState.project.imageUrl} alt={modalState.project.title} className="w-full h-full object-cover"/>
+                  <button 
+                    onClick={() => setModalState(null)} 
+                    className="absolute top-6 right-6 p-3 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-black/70 transition-all active:scale-90 z-20"
+                    aria-label="Close Case Study"
+                  >
+                    <X size={24}/>
+                  </button>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-10 md:p-16">
+                    <h3 className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tighter">{modalState.project.title}</h3>
+                    <div className="flex gap-4">
+                      {modalState.project.demoVideoUrl && (
+                        <Button 
+                          onClick={() => setModalState({ ...modalState, autoPlay: true })} 
+                          variant="primary" 
+                          className="rounded-full shadow-2xl shadow-blue-500/40"
+                        >
+                          <Play size={18} className="mr-2" /> Play Showreel
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
             </div>
-            <div className="p-8"><p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-6">{modalState.project.fullDescription || modalState.project.description}</p></div>
+            <div className="p-10 md:p-16 overflow-y-auto">
+              <div className="max-w-4xl">
+                 <h4 className="text-sm font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                   <Info size={16} /> Detailed Case Study
+                 </h4>
+                 <p className="text-slate-700 dark:text-slate-300 text-xl leading-relaxed mb-10 font-medium">
+                   {modalState.project.fullDescription || modalState.project.description}
+                 </p>
+                 <div className="flex flex-wrap gap-3">
+                    {modalState.project.technologies?.map(tech => (
+                      <span key={tech} className="px-5 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-700">
+                        {tech}
+                      </span>
+                    ))}
+                 </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
