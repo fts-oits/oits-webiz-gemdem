@@ -29,22 +29,24 @@ export const Contact: React.FC = () => {
 
   const validate = () => {
     const newErrors: typeof errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!formData.name.trim()) {
       newErrors.name = 'Full name is required';
     } else if (formData.name.trim().length < 3) {
-      newErrors.name = 'Minimum 3 characters required';
+      newErrors.name = 'Please enter at least 3 characters';
     }
 
     if (!formData.email.trim()) {
       newErrors.email = 'Email address is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Provide a valid business email';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Please provide a valid email address';
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = 'Please share your inquiry details';
+      newErrors.message = 'Please provide some details about your project';
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Please provide more context (min 10 chars)';
+      newErrors.message = 'Please provide a bit more context (min 10 chars)';
     }
     
     setErrors(newErrors);
@@ -56,11 +58,20 @@ export const Contact: React.FC = () => {
     if (!validate()) return;
     
     setStatus('sending');
+    // Simulate API call
     setTimeout(() => {
       setStatus('success');
       setFormData({ name: '', email: '', message: '' });
       setErrors({});
     }, 1500);
+  };
+
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error for this field as the user types
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
   };
 
   const getLabelClass = (field: keyof typeof formData) => {
@@ -73,7 +84,7 @@ export const Contact: React.FC = () => {
     const hasError = !!errors[field];
     const isFocused = focusedField === field;
     return `w-full bg-slate-50 dark:bg-slate-900/40 border-2 transition-all duration-300 rounded-2xl px-5 py-4 text-slate-900 dark:text-slate-100 placeholder-transparent focus:outline-none ring-offset-2 dark:ring-offset-slate-950
-      ${hasError ? 'border-red-500 ring-red-500/10 animate-shake' : isFocused ? 'border-blue-600 ring-4 ring-blue-600/5 shadow-[0_0_25px_rgba(37,99,235,0.1)]' : 'border-slate-200 dark:border-slate-800'}`;
+      ${hasError ? 'border-red-500 ring-red-500/10 animate-shake' : isFocused ? 'border-blue-600 ring-4 ring-blue-600/5 shadow-[0_0_25px_rgba(37,99,235,0.1)]' : 'border-slate-200 dark:border-slate-800 hover:border-blue-300/50'}`;
   };
 
   return (
@@ -97,7 +108,7 @@ export const Contact: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 pt-4">
               {[
                 { icon: Mail, label: 'Email Engineering', value: CONTACT_EMAIL, aria: `Email us at ${CONTACT_EMAIL}` },
-                { icon: Phone, label: 'Direct Line', value: '+880 1234 567890', aria: "Call our office" }
+                { icon: Phone, label: 'Direct Line', value: '+880 1234 567890', aria: "Call our office phone" }
               ].map((item, idx) => (
                 <div key={item.label} className={`flex flex-col gap-4 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'}`} style={{ transitionDelay: `${200 + (idx * 150)}ms` }}>
                   <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm border border-blue-200/50 dark:border-blue-800/50">
@@ -125,7 +136,7 @@ export const Contact: React.FC = () => {
                    <Button variant="outline" onClick={() => setStatus('idle')} className="w-full rounded-2xl py-6" aria-label="Send another message">Submit New Brief</Button>
                 </div>
              ) : (
-               <form onSubmit={handleSubmit} className="space-y-8" noValidate>
+               <form onSubmit={handleSubmit} className="space-y-8" noValidate aria-label="Contact information form">
                  <div className="space-y-8">
                    <div className="relative group">
                      <label id="label-name" htmlFor="name" className={getLabelClass('name')}>
@@ -136,19 +147,17 @@ export const Contact: React.FC = () => {
                         id="name"
                         autoComplete="name"
                         aria-labelledby="label-name"
+                        aria-required="true"
                         aria-invalid={!!errors.name}
                         className={getInputClass('name')}
                         placeholder="Full Name"
                         value={formData.name}
                         onFocus={() => setFocusedField('name')}
                         onBlur={() => setFocusedField(null)}
-                        onChange={(e) => {
-                          setFormData({...formData, name: e.target.value});
-                          if(errors.name) setErrors({...errors, name: undefined});
-                        }}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
                      />
                      {errors.name && (
-                       <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-xl animate-in slide-in-from-top-1">
+                       <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-xl animate-in slide-in-from-top-1" role="alert">
                          <AlertCircle size={14} className="text-red-600 dark:text-red-400" />
                          <span className="text-red-600 dark:text-red-400 text-xs font-bold">{errors.name}</span>
                        </div>
@@ -164,19 +173,17 @@ export const Contact: React.FC = () => {
                         id="email"
                         autoComplete="email"
                         aria-labelledby="label-email"
+                        aria-required="true"
                         aria-invalid={!!errors.email}
                         className={getInputClass('email')}
                         placeholder="Work Email Address"
                         value={formData.email}
                         onFocus={() => setFocusedField('email')}
                         onBlur={() => setFocusedField(null)}
-                        onChange={(e) => {
-                          setFormData({...formData, email: e.target.value});
-                          if(errors.email) setErrors({...errors, email: undefined});
-                        }}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
                      />
                      {errors.email && (
-                       <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-xl animate-in slide-in-from-top-1">
+                       <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-xl animate-in slide-in-from-top-1" role="alert">
                          <AlertCircle size={14} className="text-red-600 dark:text-red-400" />
                          <span className="text-red-600 dark:text-red-400 text-xs font-bold">{errors.email}</span>
                        </div>
@@ -191,6 +198,7 @@ export const Contact: React.FC = () => {
                    <textarea 
                       id="message"
                       aria-labelledby="label-message"
+                      aria-required="true"
                       aria-invalid={!!errors.message}
                       rows={5}
                       className={`${getInputClass('message')} resize-none`}
@@ -198,13 +206,10 @@ export const Contact: React.FC = () => {
                       value={formData.message}
                       onFocus={() => setFocusedField('message')}
                       onBlur={() => setFocusedField(null)}
-                      onChange={(e) => {
-                        setFormData({...formData, message: e.target.value});
-                        if(errors.message) setErrors({...errors, message: undefined});
-                      }}
+                      onChange={(e) => handleInputChange('message', e.target.value)}
                    />
                    {errors.message && (
-                     <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-xl animate-in slide-in-from-top-1">
+                     <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-xl animate-in slide-in-from-top-1" role="alert">
                        <AlertCircle size={14} className="text-red-600 dark:text-red-400" />
                        <span className="text-red-600 dark:text-red-400 text-xs font-bold">{errors.message}</span>
                      </div>
@@ -217,7 +222,7 @@ export const Contact: React.FC = () => {
                    size="lg" 
                    className="w-full text-lg shadow-xl shadow-blue-600/30 rounded-2xl py-8 active:scale-[0.98] transition-all"
                    disabled={status === 'sending'}
-                   aria-label="Submit project consultation form"
+                   aria-label={status === 'sending' ? 'Sending message...' : 'Submit project consultation form'}
                  >
                    <span className="flex items-center gap-2">
                      {status === 'sending' ? (

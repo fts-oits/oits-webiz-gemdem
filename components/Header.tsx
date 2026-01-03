@@ -10,11 +10,11 @@ interface HeaderProps {
 }
 
 const NAV_LINKS = [
-  { label: 'Home', href: '/' },
-  { label: 'Services', href: '/services' },
-  { label: 'Portfolio', href: '/portfolio' },
-  { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Home', href: '/', aria: 'Navigate to home page' },
+  { label: 'Services', href: '/services', aria: 'View our software engineering services' },
+  { label: 'Portfolio', href: '/portfolio', aria: 'Browse our past projects and case studies' },
+  { label: 'About', href: '/about', aria: 'Learn about OITS Dhaka and our mission' },
+  { label: 'Contact', href: '/contact', aria: 'Get in touch with our engineering team' },
 ];
 
 export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
@@ -66,6 +66,7 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
             <Link 
               key={item.label} 
               to={item.href}
+              aria-label={item.aria}
               onClick={(e) => handleLinkClick(e as any, item.href)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 active:scale-95 ${
                 location.pathname === item.href 
@@ -89,8 +90,8 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 
           <div className="ml-2">
             <Link to="/contact">
-              <Button variant="primary" size="sm" aria-label="Request a demo">
-                Request Demo
+              <Button variant="primary" size="sm" aria-label="Request a consultation">
+                Consult Now
               </Button>
             </Link>
           </div>
@@ -109,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
           <button 
             className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label={isMobileMenuOpen ? "Close main menu" : "Open main menu"}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? <X /> : <Menu />}
@@ -125,6 +126,7 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
               <Link 
                 key={item.label} 
                 to={item.href}
+                aria-label={item.aria}
                 onClick={(e) => {
                   handleLinkClick(e as any, item.href);
                   setIsMobileMenuOpen(false);
@@ -139,8 +141,8 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
               </Link>
             ))}
             <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
-              <Button className="w-full mt-4" aria-label="Request a demonstration">
-                Request Demo
+              <Button className="w-full mt-4" aria-label="Request a consultation">
+                Consult Now
               </Button>
             </Link>
           </nav>
