@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play, Terminal as TerminalIcon } from 'lucide-react';
+import { ArrowRight, Terminal as TerminalIcon } from 'lucide-react';
 import { Button } from './ui/Button';
 import { TAGLINE, COMPANY_NAME } from '../constants';
 
@@ -18,6 +18,13 @@ async function deploy() {
   await project.initialize();
   return "Excellence Delivered.";
 }`;
+
+const TRUSTED_BY = [
+  { name: 'TechFlow', color: 'text-slate-400' },
+  { name: 'CloudScale', color: 'text-slate-400' },
+  { name: 'InnoVate', color: 'text-slate-400' },
+  { name: 'Nexus', color: 'text-slate-400' },
+];
 
 export const Hero: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -53,7 +60,7 @@ export const Hero: React.FC = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
           
-          <div className="flex-1 space-y-8 text-center lg:text-left">
+          <div className="flex-1 space-y-10 text-center lg:text-left">
             <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest transition-all duration-700 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
               Engineering Excellence
@@ -73,18 +80,29 @@ export const Hero: React.FC = () => {
                 <Button 
                   size="lg" 
                   variant="primary"
-                  aria-label="Request a quote and start your journey"
-                  className="group transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/20 px-10"
+                  className="group transform transition-all duration-300 hover:scale-105 px-10"
                 >
                   Request a Quote
                   <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
               <Link to="/portfolio">
-                <Button variant="outline" size="lg" className="group" aria-label="Explore our previous projects">
+                <Button variant="outline" size="lg" className="group">
                   Our Portfolio
                 </Button>
               </Link>
+            </div>
+
+            {/* Trusted By Section */}
+            <div className={`pt-10 transition-all duration-1000 delay-600 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+              <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-4">Trusted By Emerging Leaders</p>
+              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-8 opacity-40 grayscale">
+                {TRUSTED_BY.map((partner) => (
+                  <span key={partner.name} className="text-xl font-black text-slate-900 dark:text-white tracking-tighter">
+                    {partner.name}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 

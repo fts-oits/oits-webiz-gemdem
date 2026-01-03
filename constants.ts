@@ -7,12 +7,11 @@ export const CONTACT_EMAIL = "info@oitsdhaka.com";
 export const ADDRESS = "House # 42, Road # 2/A, Block # Z, Dhaka 1209, Bangladesh";
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: `#${SectionId.HOME}` },
-  { label: 'Services', href: `#${SectionId.SERVICES}` },
-  { label: 'Workflow', href: `#${SectionId.PROCESS}` },
-  { label: 'Portfolio', href: `#${SectionId.PORTFOLIO}` },
-  { label: 'About', href: `#${SectionId.ABOUT}` },
-  { label: 'Contact', href: `#${SectionId.CONTACT}` },
+  { label: 'Home', href: `/` },
+  { label: 'Services', href: `/services` },
+  { label: 'Portfolio', href: `/portfolio` },
+  { label: 'About', href: `/about` },
+  { label: 'Contact', href: `/contact` },
 ];
 
 export const PROCESS_STEPS: ProcessStep[] = [
@@ -57,30 +56,30 @@ export const SERVICES: Service[] = [
   {
     id: 'web-dev',
     title: 'Enterprise Web Solutions',
-    description: 'Scalable, high-performance web applications built for business logic and seamless integration.',
+    description: 'Architecting scalable, high-performance web applications tailored for complex business logic and high-traffic environments.',
     icon: 'Globe',
-    features: ['React & Next.js Experts', 'SaaS Architecture', 'E-commerce Engine', 'Custom CMS'],
+    features: ['React & Next.js Experts', 'SaaS Multitenancy', 'E-commerce Engine', 'Headless CMS Integration'],
   },
   {
     id: 'mobile-dev',
     title: 'Native Mobile Apps',
-    description: 'High-fidelity iOS and Android applications that deliver native-grade performance and fluid UX.',
+    description: 'Crafting premium iOS and Android experiences that leverage native hardware capabilities for maximum performance.',
     icon: 'Smartphone',
-    features: ['iOS (Swift)', 'Android (Kotlin)', 'React Native', 'Flutter'],
+    features: ['Swift & Kotlin Native', 'React Native Framework', 'Flutter Development', 'Mobile-First Security'],
   },
   {
     id: 'dedicated-teams',
     title: 'Dedicated Teams',
-    description: 'Expand your engineering capacity with our highly skilled full-time developers and designers.',
+    description: 'High-velocity engineering teams integrated directly into your workflow to accelerate product delivery cycles.',
     icon: 'Users',
-    features: ['Staff Augmentation', 'Project Management', 'Full-stack Experts', 'Agile Setup'],
+    features: ['Staff Augmentation', 'Agile Governance', 'Full-stack Engineering', 'Cross-functional Support'],
   },
   {
     id: 'cloud',
     title: 'Cloud & Infrastructure',
-    description: 'Robust AWS/GCP infrastructure with automated CI/CD pipelines and high availability.',
+    description: 'Modernizing infrastructure with AWS/GCP best practices, ensuring 99.99% availability and automated scaling.',
     icon: 'Cloud',
-    features: ['AWS / GCP / Azure', 'DevOps Automation', 'Cybersecurity', 'Database Tuning'],
+    features: ['Serverless Architecture', 'Kubernetes Orchestration', 'DevOps Automation', 'Disaster Recovery'],
   },
 ];
 

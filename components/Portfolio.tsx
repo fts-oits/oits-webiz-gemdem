@@ -252,8 +252,8 @@ const ProjectCard = ({ project, index, onClick, onViewDemo, highlightedTags }: a
   
   return (
     <div className="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
-      <div className="relative aspect-[4/3] overflow-hidden bg-slate-200 dark:bg-slate-800" onClick={onClick}>
-        {!imageLoaded && <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 animate-shimmer"></div>}
+      <div className="relative aspect-[4/3] overflow-hidden bg-slate-200 dark:bg-slate-800 cursor-pointer" onClick={onClick}>
+        {!imageLoaded && <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 animate-pulse"></div>}
         <img 
           src={project.imageUrl} 
           alt={project.title} 
@@ -261,8 +261,21 @@ const ProjectCard = ({ project, index, onClick, onViewDemo, highlightedTags }: a
           onLoad={() => setImageLoaded(true)}
           className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
-          <button className="bg-white text-slate-900 px-6 py-2 rounded-full font-bold text-sm shadow-xl" onClick={(e) => { e.stopPropagation(); onClick(); }}>Details</button>
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col gap-3 items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+          <button 
+            className="bg-white text-slate-900 px-6 py-2 rounded-full font-bold text-sm shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-blue-600 hover:text-white" 
+            onClick={(e) => { e.stopPropagation(); onClick(); }}
+          >
+            View Details
+          </button>
+          {project.demoVideoUrl && (
+            <button 
+              className="bg-blue-600 text-white px-6 py-2 rounded-full font-bold text-sm shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75 hover:bg-blue-700 flex items-center gap-2" 
+              onClick={(e) => { e.stopPropagation(); onViewDemo(); }}
+            >
+              <MonitorPlay size={16} /> View Demo
+            </button>
+          )}
         </div>
       </div>
       <div className="p-6">
@@ -270,7 +283,7 @@ const ProjectCard = ({ project, index, onClick, onViewDemo, highlightedTags }: a
         <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 mb-4">{project.description}</p>
         <div className="flex flex-wrap gap-1.5">
           {project.technologies?.map((tech: string) => (
-            <span key={tech} className={`text-[10px] px-2 py-0.5 rounded-full border ${highlightedTags.includes(tech) ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}>{tech}</span>
+            <span key={tech} className={`text-[10px] px-2 py-0.5 rounded-full border transition-all duration-300 ${highlightedTags.includes(tech) ? 'bg-blue-600 border-blue-600 text-white font-bold scale-105 shadow-sm' : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'}`}>{tech}</span>
           ))}
         </div>
       </div>
@@ -282,9 +295,9 @@ const ProjectCard = ({ project, index, onClick, onViewDemo, highlightedTags }: a
 export const Portfolio: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [tagSearch, setTagSearch] = useState('');
-  const [selectedProjectState, setSelectedProjectState] = useState<{ project: Project; autoPlay: boolean } | null>(null);
   const [loading, setLoading] = useState(true);
+  // Fix: Define missing state for selected project modal
+  const [selectedProjectState, setSelectedProjectState] = useState<{ project: Project; autoPlay: boolean } | null>(null);
 
   useEffect(() => {
     // Simulate initial data fetch
@@ -292,18 +305,23 @@ export const Portfolio: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const categories = [ALL_CATEGORY, ...Array.from(new Set(PROJECTS.map(p => p.category)))];
+  const categories = useMemo(() => [ALL_CATEGORY, ...Array.from(new Set(PROJECTS.map(p => p.category)))], []);
+  
   const allTags = useMemo(() => {
     const tags = new Set<string>();
     PROJECTS.forEach(p => p.technologies?.forEach(t => tags.add(t)));
     return Array.from(tags).sort();
   }, []);
 
-  const filteredProjects = PROJECTS.filter(p => {
+  const filteredProjects = useMemo(() => PROJECTS.filter(p => {
     const matchCat = activeCategory === ALL_CATEGORY || p.category === activeCategory;
     const matchTags = selectedTags.length === 0 || (p.technologies && selectedTags.some(tag => p.technologies?.includes(tag)));
     return matchCat && matchTags;
-  });
+  }), [activeCategory, selectedTags]);
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+  };
 
   return (
     <section id="portfolio" className="py-24 bg-slate-50 dark:bg-slate-950 min-h-screen">
@@ -313,36 +331,72 @@ export const Portfolio: React.FC = () => {
               <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Categories</h4>
               <div className="flex lg:flex-col gap-2 overflow-x-auto no-scrollbar pb-2 lg:pb-0">
                 {categories.map(cat => (
-                  <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-4 py-2 rounded-xl text-sm font-semibold text-left whitespace-nowrap ${activeCategory === cat ? 'bg-slate-900 text-white' : 'bg-white dark:bg-slate-900'}`}>{cat}</button>
+                  <button 
+                    key={cat} 
+                    onClick={() => setActiveCategory(cat)} 
+                    className={`px-4 py-2 rounded-xl text-sm font-semibold text-left whitespace-nowrap transition-all duration-300 ${activeCategory === cat ? 'bg-slate-900 text-white shadow-lg' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                  >
+                    {cat}
+                  </button>
                 ))}
               </div>
            </div>
            <div className="flex-1">
-              <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 mb-8">
-                <div className="flex items-center gap-2 mb-4">
-                  <Tag size={18} className="text-blue-600" />
-                  <span className="font-bold">Filter by Stack</span>
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 mb-8 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Tag size={18} className="text-blue-600" />
+                    <span className="font-bold text-slate-900 dark:text-white">Filter by Stack</span>
+                  </div>
+                  {selectedTags.length > 0 && (
+                    <button onClick={() => setSelectedTags([])} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                      <RotateCcw size={12} /> Clear all
+                    </button>
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {allTags.map(tag => (
-                    <button key={tag} onClick={() => setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])} className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${selectedTags.includes(tag) ? 'bg-blue-600 border-blue-600 text-white' : 'bg-slate-50 dark:bg-slate-800'}`}>{tag}</button>
+                    <button 
+                      key={tag} 
+                      onClick={() => toggleTag(tag)} 
+                      className={`px-3 py-1 rounded-full text-xs font-bold border transition-all duration-300 active:scale-90 ${selectedTags.includes(tag) ? 'bg-blue-600 border-blue-600 text-white shadow-md scale-105' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-400'}`}
+                    >
+                      {tag}
+                    </button>
                   ))}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[400px]">
                 {loading ? (
                   Array.from({ length: 6 }).map((_, i) => <ProjectSkeleton key={i} />)
-                ) : (
+                ) : filteredProjects.length > 0 ? (
                   filteredProjects.map((project, index) => (
-                    <ProjectCard key={project.id} index={index} project={project} highlightedTags={selectedTags} onClick={() => setSelectedProjectState({ project, autoPlay: false })} onViewDemo={() => setSelectedProjectState({ project, autoPlay: true })} />
+                    <ProjectCard 
+                      key={project.id} 
+                      index={index} 
+                      project={project} 
+                      highlightedTags={selectedTags} 
+                      onClick={() => setSelectedProjectState({ project, autoPlay: false })} 
+                      onViewDemo={() => setSelectedProjectState({ project, autoPlay: true })} 
+                    />
                   ))
+                ) : (
+                  <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                    <p className="text-slate-500 mb-4 font-medium">No projects found matching these filters.</p>
+                    <Button variant="outline" size="sm" onClick={() => { setActiveCategory(ALL_CATEGORY); setSelectedTags([]); }}>Reset Filters</Button>
+                  </div>
                 )}
               </div>
            </div>
         </div>
       </div>
-      <ProjectModal project={selectedProjectState?.project || null} autoPlay={selectedProjectState?.autoPlay} onClose={() => setSelectedProjectState(null)} onProjectSelect={(p) => setSelectedProjectState({ project: p, autoPlay: false })} />
+      <ProjectModal 
+        project={selectedProjectState?.project || null} 
+        autoPlay={selectedProjectState?.autoPlay} 
+        onClose={() => setSelectedProjectState(null)} 
+        onProjectSelect={(p) => setSelectedProjectState({ project: p, autoPlay: false })} 
+      />
     </section>
   );
 };

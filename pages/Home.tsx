@@ -3,6 +3,7 @@ import React from 'react';
 import { Hero } from '../components/Hero';
 import { Marquee } from '../components/Marquee';
 import { Services } from '../components/Services';
+import { FeaturedIn } from '../components/FeaturedIn';
 import { Process } from '../components/Process';
 import { Portfolio } from '../components/Portfolio';
 import { Testimonials } from '../components/Testimonials';
@@ -11,40 +12,39 @@ import { Button } from '../components/ui/Button';
 
 const Home: React.FC = () => {
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in overflow-hidden">
       <Hero />
       <Marquee />
       
-      {/* Featured Services Preview */}
       <div className="relative">
         <Services />
-        <div className="container mx-auto px-6 pb-24 text-center">
+        <FeaturedIn />
+        <div className="container mx-auto px-6 py-24 text-center">
           <Link to="/services">
-            <Button variant="outline" size="lg">Explore All Services</Button>
+            <Button variant="outline" size="lg" className="rounded-full">Explore All Services</Button>
           </Link>
         </div>
       </div>
 
       <Process />
 
-      {/* Featured Portfolio Preview */}
-      <div className="bg-slate-50 dark:bg-slate-950">
+      <div className="bg-slate-50 dark:bg-slate-950/50">
         <Portfolio />
         <div className="container mx-auto px-6 pb-24 text-center">
           <Link to="/portfolio">
-            <Button variant="outline" size="lg">View Full Case Studies</Button>
+            <Button variant="outline" size="lg" className="rounded-full">View Full Case Studies</Button>
           </Link>
         </div>
       </div>
 
       <Testimonials />
       
-      {/* Pre-footer CTA */}
-      <section className="py-24 bg-blue-600">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">Ready to transform your business?</h2>
+      <section className="py-32 bg-blue-600 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 opacity-50" />
+        <div className="container mx-auto px-6 text-center relative z-10">
+          <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-10 leading-tight">Ready to build your <br/> digital future?</h2>
           <Link to="/contact">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">Get Started Today</Button>
+            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 scale-110 shadow-2xl">Get Started Today</Button>
           </Link>
         </div>
       </section>

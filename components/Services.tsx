@@ -1,25 +1,20 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Globe, Smartphone, PenTool, Cloud, ArrowUpRight, Code2, Server, Database, Layers, Terminal } from 'lucide-react';
-import { SERVICES, TECH_DOMAINS } from '../constants';
-import { SectionId } from '../types';
+import { Globe, Smartphone, Users, Cloud, ArrowUpRight, X, Check } from 'lucide-react';
+import { SERVICES } from '../constants';
+import { SectionId, Service } from '../types';
+import { Button } from './ui/Button';
 
 const iconMap: Record<string, React.ReactNode> = {
   Globe: <Globe className="w-6 h-6" />,
   Smartphone: <Smartphone className="w-6 h-6" />,
-  PenTool: <PenTool className="w-6 h-6" />,
+  Users: <Users className="w-6 h-6" />,
   Cloud: <Cloud className="w-6 h-6" />,
-};
-
-const domainIcons: Record<string, React.ReactNode> = {
-  frontend: <Code2 size={18} />,
-  backend: <Server size={18} />,
-  cloud: <Cloud size={18} />,
 };
 
 export const Services: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState(TECH_DOMAINS[0].id);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -38,52 +33,101 @@ export const Services: React.FC = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id={SectionId.SERVICES} className="py-24 bg-white dark:bg-slate-900 relative transition-colors duration-300">
+    <section ref={sectionRef} id={SectionId.SERVICES} className="py-24 md:py-32 bg-white dark:bg-slate-900 relative transition-colors duration-300">
       <div className="container mx-auto px-6">
         
-        <div className={`flex flex-col md:flex-row justify-between items-end mb-16 gap-6 transition-all duration-1000 ease-out transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-20 gap-8 transition-all duration-1000 ease-out transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="max-w-2xl">
-            <h2 className="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-3">Our Expertise</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
-              Comprehensive solutions for your digital transformation.
+            <h2 className="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-4">Our Expertise</h2>
+            <h3 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white leading-[1.1]">
+              Future-proof solutions <br className="hidden lg:block" /> for digital natives.
             </h3>
           </div>
-          <p className="text-slate-600 dark:text-slate-400 max-w-md pb-2">
-            We leverage modern architectures and industry best practices to build software that scales globally.
+          <p className="text-slate-600 dark:text-slate-400 max-w-sm text-lg leading-relaxed">
+            We bridge the gap between complex problems and elegant code using modern architectures.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {SERVICES.map((service, index) => (
             <div 
               key={service.id} 
-              className={`group relative bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-3xl p-8 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20 hover:border-blue-400/50 dark:hover:border-blue-600/50 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-              style={{ transitionDelay: `${index * 120}ms` }}
-              role="article"
-              aria-label={service.title}
+              className={`group relative bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 rounded-[2rem] p-10 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20 hover:border-blue-400/50 dark:hover:border-blue-600/50 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              style={{ transitionDelay: `${index * 100}ms` }}
             >
-              <div className="absolute top-8 right-8 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300" aria-hidden="true">
-                <ArrowUpRight className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-              </div>
-
-              <div className="w-12 h-12 shrink-0 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center text-slate-900 dark:text-white shadow-sm mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 group-hover:scale-110">
+              <div className="w-14 h-14 shrink-0 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center text-slate-900 dark:text-white shadow-sm mb-8 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 group-hover:scale-110 group-hover:animate-subtle-bounce">
                 {iconMap[service.icon]}
               </div>
 
-              <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{service.title}</h4>
-              <p className="text-slate-600 dark:text-slate-400 mb-6 text-sm leading-relaxed">{service.description}</p>
+              <h4 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{service.title}</h4>
+              <p className="text-slate-600 dark:text-slate-400 mb-6 text-sm leading-relaxed line-clamp-2">
+                {service.description}
+              </p>
 
-              <div className="flex flex-wrap gap-2 mt-auto">
-                {service.features.map((feature, idx) => (
-                  <span key={idx} className="px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 group-hover:text-blue-600 transition-all">
-                    {feature}
-                  </span>
+              <div className="space-y-3 mb-8">
+                {service.features.slice(0, 3).map((feature, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    <Check size={14} className="text-blue-500" />
+                    <span>{feature}</span>
+                  </div>
                 ))}
+              </div>
+
+              <div className="space-y-4">
+                <div className="h-px w-full bg-slate-200 dark:bg-slate-700/50" />
+                <button 
+                  onClick={() => setSelectedService(service)}
+                  className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/btn uppercase tracking-widest"
+                >
+                  Learn More <ArrowUpRight size={14} className="transition-transform group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1" />
+                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Service Detail Modal */}
+      {selectedService && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-300">
+            <div className="p-8 md:p-12 relative">
+              <button 
+                onClick={() => setSelectedService(null)}
+                className="absolute top-8 right-8 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors text-slate-500 dark:text-slate-400"
+              >
+                <X size={24} />
+              </button>
+              
+              <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 mb-8">
+                {iconMap[selectedService.icon]}
+              </div>
+
+              <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">{selectedService.title}</h3>
+              <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 leading-relaxed">
+                {selectedService.description}
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {selectedService.features.map((feature, idx) => (
+                  <div key={idx} className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+                    <div className="w-2 h-2 rounded-full bg-blue-600" />
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-10 flex gap-4">
+                <Link to="/contact" className="flex-1" onClick={() => setSelectedService(null)}>
+                  <Button variant="primary" className="w-full">Consult Now</Button>
+                </Link>
+                <Button onClick={() => setSelectedService(null)} variant="outline">Close</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
+import { Link } from 'react-router-dom';
