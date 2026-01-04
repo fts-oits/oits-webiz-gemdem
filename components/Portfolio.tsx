@@ -392,23 +392,31 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
   const categories = useMemo(() => [ALL_CATEGORY, ...Array.from(new Set(PROJECTS.map(p => p.category)))], []);
   const allTags = useMemo(() => Array.from(new Set(PROJECTS.flatMap(p => p.technologies || []))).sort(), []);
 
-  const categoryCounts = useMemo(() => {
+  // Faceted counts based on CURRENT filters for tags
+  const dynamicCategoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     PROJECTS.forEach(p => {
-      counts[p.category] = (counts[p.category] || 0) + 1;
+      const matchTags = selectedTags.length === 0 || (p.technologies && selectedTags.some(tag => p.technologies?.includes(tag)));
+      if (matchTags) {
+        counts[p.category] = (counts[p.category] || 0) + 1;
+      }
     });
     return counts;
-  }, []);
+  }, [selectedTags]);
 
-  const tagCounts = useMemo(() => {
+  // Faceted counts based on CURRENT filters for categories
+  const dynamicTagCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     PROJECTS.forEach(p => {
-      p.technologies?.forEach(t => {
-        counts[t] = (counts[t] || 0) + 1;
-      });
+      const matchCat = selectedCategories.length === 0 || selectedCategories.includes(p.category);
+      if (matchCat) {
+        p.technologies?.forEach(t => {
+          counts[t] = (counts[t] || 0) + 1;
+        });
+      }
     });
     return counts;
-  }, []);
+  }, [selectedCategories]);
 
   const filteredProjects = useMemo(() => {
     let projs = PROJECTS.filter(p => {
@@ -447,7 +455,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
                 <nav className="flex lg:flex-col gap-3 overflow-x-auto no-scrollbar pb-2" role="group" aria-label="Vertical Filter">
                   {categories.map(cat => {
                     const active = cat === ALL_CATEGORY ? selectedCategories.length === 0 : selectedCategories.includes(cat);
-                    const count = cat === ALL_CATEGORY ? PROJECTS.length : categoryCounts[cat];
+                    const count = cat === ALL_CATEGORY ? PROJECTS.length : (dynamicCategoryCounts[cat] || 0);
                     return (
                       <button 
                         key={cat} 
@@ -490,7 +498,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
                   <div className="flex flex-wrap gap-3" role="group" aria-label="Tech Stack Filter">
                     {allTags.map(tag => {
                       const active = selectedTags.includes(tag);
-                      const count = tagCounts[tag];
+                      const count = dynamicTagCounts[tag] || 0;
                       return (
                         <button 
                           key={tag} 
@@ -577,10 +585,10 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
                     </h4>
                     <div className="flex items-center gap-4">
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Share Project:</span>
-                      <button onClick={() => shareProject('linkedin')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-blue-600 hover:text-white transition-all">
+                      <button onClick={() => shareProject('linkedin')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-blue-600 hover:text-white transition-all shadow-sm">
                         <Linkedin size={18} />
                       </button>
-                      <button onClick={() => shareProject('twitter')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-blue-400 hover:text-white transition-all">
+                      <button onClick={() => shareProject('twitter')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-blue-400 hover:text-white transition-all shadow-sm">
                         <Twitter size={18} />
                       </button>
                     </div>
