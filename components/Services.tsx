@@ -65,22 +65,25 @@ export const Services: React.FC<ServicesProps> = ({ limit }) => {
               role="button"
               tabIndex={0}
               aria-label={`Service: ${service.title}. Click for details.`}
+              aria-expanded={selectedService?.id === service.id}
               onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSelectedService(service)}
             >
-              {/* Icon with hover bounce animation */}
+              {/* Icon with hover bounce animation for interactive feedback */}
               <div className="w-16 h-16 shrink-0 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center text-slate-900 dark:text-white shadow-sm mb-10 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 group-hover:animate-subtle-bounce border border-slate-100 dark:border-slate-600">
                 {iconMap[service.icon]}
               </div>
 
               <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight">{service.title}</h4>
-              <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-10 line-clamp-4 font-medium italic">
+              <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-8 line-clamp-4 font-medium">
                 {service.description}
               </p>
 
-              <div className="space-y-4 mb-10">
-                {service.features.map((feature, idx) => (
+              {/* Technologies/Benefits highlights directly in the card */}
+              <div className="space-y-3 mb-10">
+                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Key Tech & Benefits</p>
+                {service.features.slice(0, 3).map((feature, idx) => (
                   <div key={idx} className="flex items-center gap-3 text-xs font-bold text-slate-500 dark:text-slate-400">
-                    <Check size={16} className="text-blue-600 dark:text-blue-400 shrink-0" />
+                    <Check size={14} className="text-blue-600 dark:text-blue-400 shrink-0" />
                     <span className="tracking-tight">{feature}</span>
                   </div>
                 ))}
@@ -88,8 +91,20 @@ export const Services: React.FC<ServicesProps> = ({ limit }) => {
 
               <div className="space-y-6">
                 <div className="h-px w-full bg-slate-200 dark:bg-slate-700/50" />
-                <button className="flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white group/btn uppercase tracking-[0.2em]">
-                  View Service Details <ArrowUpRight size={14} className="transition-transform group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1" />
+                {/* Learn More button with scale-up and icon translation on hover */}
+                <button 
+                  className="group/btn flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] transition-all duration-300 hover:scale-105 active:scale-95"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedService(service);
+                  }}
+                  aria-label={`Learn more about ${service.title}`}
+                >
+                  Learn More 
+                  <ArrowUpRight 
+                    size={16} 
+                    className="transition-transform duration-300 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 group-hover/btn:scale-110 text-blue-600 dark:text-blue-400" 
+                  />
                 </button>
               </div>
             </div>
@@ -97,11 +112,21 @@ export const Services: React.FC<ServicesProps> = ({ limit }) => {
         </div>
       </div>
 
+      {/* Expanded Modal for Service Details */}
       {selectedService && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300" role="dialog" aria-modal="true">
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300" 
+          role="dialog" 
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
           <div className="w-full max-w-3xl bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl overflow-hidden border-2 border-slate-50 dark:border-slate-800 animate-in zoom-in-95 duration-300 max-h-[90vh] flex flex-col">
             <div className="p-10 md:p-16 relative overflow-y-auto">
-              <button onClick={() => setSelectedService(null)} className="absolute top-10 right-10 p-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors text-slate-500" aria-label="Close">
+              <button 
+                onClick={() => setSelectedService(null)} 
+                className="absolute top-10 right-10 p-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors text-slate-500 focus-visible:ring-4 focus-visible:ring-blue-500/20" 
+                aria-label="Close details"
+              >
                 <X size={28} />
               </button>
               
@@ -110,7 +135,7 @@ export const Services: React.FC<ServicesProps> = ({ limit }) => {
                   {iconMap[selectedService.icon]}
                 </div>
                 <div>
-                  <h3 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter mb-2">{selectedService.title}</h3>
+                  <h3 id="modal-title" className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter mb-2">{selectedService.title}</h3>
                   <div className="flex gap-2">
                     <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Enterprise Ready</span>
                     <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Agile Delivery</span>
@@ -139,7 +164,7 @@ export const Services: React.FC<ServicesProps> = ({ limit }) => {
                   onClick={() => setSelectedService(null)} 
                   className="flex items-center justify-center gap-2 px-8 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 dark:hover:text-white transition-colors"
                 >
-                  <BookOpen size={18} /> Learn More
+                  <BookOpen size={18} /> Documentation
                 </button>
               </div>
             </div>

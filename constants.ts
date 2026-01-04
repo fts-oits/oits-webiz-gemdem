@@ -55,30 +55,30 @@ export const SERVICES: Service[] = [
   {
     id: 'web-dev',
     title: 'Enterprise Web Solutions',
-    description: 'Architecting scalable, high-performance web applications tailored for complex business logic and high-traffic environments.',
+    description: 'We architect scalable, high-performance web applications tailored for complex business logic and high-traffic environments. Our approach ensures long-term maintainability and seamless user experiences across all platforms.',
     icon: 'Globe',
-    features: ['React & Next.js Experts', 'SaaS Multitenancy', 'E-commerce Engine', 'Headless CMS Integration'],
+    features: ['React & Next.js Optimization', 'Cloud-Native SaaS Architecture', 'High-Conversion E-commerce', 'Headless CMS & API Integration'],
   },
   {
     id: 'mobile-dev',
     title: 'Native Mobile Apps',
-    description: 'Crafting premium iOS and Android experiences that leverage native hardware capabilities for maximum performance.',
+    description: 'Crafting premium iOS and Android experiences that leverage native hardware capabilities for maximum performance. We focus on creating fluid animations and intuitive interfaces that keep users engaged.',
     icon: 'Smartphone',
-    features: ['Swift & Kotlin Native', 'React Native Framework', 'Flutter Development', 'Mobile-First Security'],
+    features: ['Swift & Kotlin Expertise', 'React Native & Flutter Mastery', 'Offline-First Functionality', 'Biometric & Device API Integration'],
   },
   {
     id: 'dedicated-teams',
     title: 'Dedicated Teams',
-    description: 'High-velocity engineering teams integrated directly into your workflow to accelerate product delivery cycles.',
+    description: 'High-velocity engineering teams integrated directly into your workflow to accelerate product delivery cycles. We provide senior-level talent that adapts to your culture and engineering standards.',
     icon: 'Users',
-    features: ['Staff Augmentation', 'Agile Governance', 'Full-stack Engineering', 'Cross-functional Support'],
+    features: ['Seamless Staff Augmentation', 'Agile Governance & Scrum', 'Full-stack Product Teams', 'On-demand Technical Leadership'],
   },
   {
     id: 'cloud',
     title: 'Cloud & Infrastructure',
-    description: 'Modernizing infrastructure with AWS/GCP best practices, ensuring 99.99% availability and automated scaling.',
+    description: 'Modernizing infrastructure with AWS, Azure, and GCP best practices, ensuring 99.99% availability and automated scaling. We build resilient systems that grow alongside your business demands.',
     icon: 'Cloud',
-    features: ['Serverless Architecture', 'Kubernetes Orchestration', 'DevOps Automation', 'Disaster Recovery'],
+    features: ['Serverless & Microservices', 'Kubernetes Cluster Management', 'Automated CI/CD Pipelines', 'Proactive Disaster Recovery'],
   },
 ];
 
