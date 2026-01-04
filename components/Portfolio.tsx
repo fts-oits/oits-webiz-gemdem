@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { X, Tag, MonitorPlay, RotateCcw, Check, Play, Pause, Volume2, VolumeX, Info, Subtitles, Linkedin, Twitter, Share2 } from 'lucide-react';
+import { X, Tag, MonitorPlay, RotateCcw, Check, Play, Pause, Volume2, VolumeX, Info, Subtitles, Linkedin, Twitter, Share2, ImageIcon } from 'lucide-react';
 import { PROJECTS } from '../constants';
 import { Project } from '../types';
 import { Button } from './ui/Button';
+
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800';
 
 const ALL_CATEGORY = 'All Categories';
 const STORAGE_KEY_CATEGORIES = 'portfolio-filter-categories';
@@ -170,6 +172,7 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, captionsUrl,
 
 const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: any) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -188,13 +191,22 @@ const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: a
       style={{ transitionDelay: `${index * 80}ms` }}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-200 dark:bg-slate-800 cursor-pointer" onClick={onClick}>
-        <img 
-          src={project.imageUrl} 
-          alt={project.title} 
-          loading="lazy"
-          onLoad={() => setImageLoaded(true)} 
-          className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`} 
-        />
+        {!imageError ? (
+          <img 
+            src={project.imageUrl} 
+            alt={project.title} 
+            loading="lazy"
+            onLoad={() => setImageLoaded(true)} 
+            onError={() => setImageError(true)}
+            className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`} 
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400 gap-4">
+             <ImageIcon size={48} strokeWidth={1} />
+             <span className="text-[10px] font-bold uppercase tracking-widest">Image Unavailable</span>
+          </div>
+        )}
+        
         {/* Hover-only buttons */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col gap-4 items-center justify-center bg-slate-900/60 backdrop-blur-sm z-10">
           <button 
@@ -367,7 +379,14 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
                 />
               ) : (
                 <div className="relative w-full h-full group/modal-img">
-                  <img src={modalState.project.imageUrl} alt={modalState.project.title} className="w-full h-full object-cover"/>
+                  <img 
+                    src={modalState.project.imageUrl} 
+                    alt={modalState.project.title} 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
+                    }}
+                  />
                   <button 
                     onClick={() => setModalState(null)} 
                     className="absolute top-6 right-6 p-3 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-black/70 transition-all active:scale-90 z-20"

@@ -80,7 +80,7 @@ const AboutPage: React.FC = () => {
       <About />
 
       {/* Careers Section */}
-      <section className="py-24 md:py-32 bg-white dark:bg-slate-950">
+      <section className="py-24 md:py-32 bg-slate-50 dark:bg-slate-950">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
@@ -99,8 +99,8 @@ const AboutPage: React.FC = () => {
                   { icon: Globe, title: "Global Scale", desc: "Work on high-impact projects for international startups and enterprises." },
                   { icon: Briefcase, title: "Equity & Growth", desc: "Competitive compensation with performance-based stock options." }
                 ].map((benefit, idx) => (
-                  <div key={idx} className="p-6 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 group hover:border-blue-500/30 transition-all">
-                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-700 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                  <div key={idx} className="p-6 bg-white dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 group hover:border-blue-500/30 transition-all shadow-sm">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-700 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 shadow-sm group-hover:scale-110 transition-transform">
                       <benefit.icon size={20} />
                     </div>
                     <h4 className="font-bold text-slate-900 dark:text-white mb-2">{benefit.title}</h4>
@@ -110,8 +110,8 @@ const AboutPage: React.FC = () => {
               </div>
               
               <Link to="/contact">
-                <Button variant="primary" size="lg" className="rounded-2xl px-12 shadow-xl shadow-blue-500/20">
-                  Join Our Team
+                <Button variant="primary" size="lg" className="rounded-2xl px-12 shadow-xl shadow-blue-500/20 active:scale-95">
+                  Explore Opportunities
                 </Button>
               </Link>
             </div>
@@ -124,7 +124,7 @@ const AboutPage: React.FC = () => {
                     className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
                     alt="Team culture at OITS Dhaka"
                   />
-                  <div className="absolute bottom-8 left-8 right-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-6 rounded-3xl border border-slate-100 dark:border-slate-800">
+                  <div className="absolute bottom-8 left-8 right-8 bg-white/95 dark:bg-slate-900/90 backdrop-blur-md p-6 rounded-3xl border border-slate-100 dark:border-slate-800">
                     <p className="text-slate-900 dark:text-white font-bold text-lg mb-1">"Best engineering culture I've ever been part of."</p>
                     <p className="text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-widest">— Lead Frontend Engineer</p>
                   </div>
@@ -135,7 +135,7 @@ const AboutPage: React.FC = () => {
       </section>
       
       {/* FAQ Section */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-900/30">
+      <section className="py-24 bg-white dark:bg-slate-900/30">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
@@ -155,7 +155,7 @@ const AboutPage: React.FC = () => {
       </section>
       
       {/* Trusted By Section */}
-      <section className="py-20 bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800">
+      <section className="py-20 bg-slate-50 dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800">
         <div className="container mx-auto px-6">
           <p className="text-center text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-12">Our Ecosystem Partners</p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-30 grayscale transition-all hover:grayscale-0">
@@ -189,7 +189,7 @@ const AboutPage: React.FC = () => {
                  <div className="aspect-square bg-blue-600/5 rounded-full absolute -inset-10 animate-pulse" />
                  <img 
                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000" 
-                   className="relative z-10 rounded-[3rem] shadow-2xl grayscale hover:grayscale-0 transition-all duration-700" 
+                   className="relative z-10 rounded-[3rem] shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000" 
                    alt="Collaborative work environment"
                  />
               </div>
@@ -197,11 +197,14 @@ const AboutPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Work With Us Section - Robust Color Contrast */}
       <section className="py-24 bg-slate-900 text-white">
         <div className="container mx-auto px-6 text-center">
-           <h3 className="text-3xl font-bold mb-10">Want to join our mission?</h3>
+           <h3 className="text-3xl md:text-5xl font-black mb-10 tracking-tight">Want to join our mission?</h3>
            <Link to="/contact">
-             <Button size="lg" variant="primary" className="bg-white text-slate-900 hover:bg-slate-100">Work with us</Button>
+             <Button size="lg" variant="primary" className="bg-white text-slate-950 hover:bg-slate-100 border-none transition-all shadow-xl px-16">
+               <span className="text-slate-950 font-black">Work With Us</span>
+             </Button>
            </Link>
         </div>
       </section>
