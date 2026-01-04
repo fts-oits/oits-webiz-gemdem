@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { About } from '../components/About';
 import { Button } from '../components/ui/Button';
 import { Link } from 'react-router-dom';
+import { ChevronDown, HelpCircle } from 'lucide-react';
 
 const LOGOS = [
   { name: 'TechFlow' },
@@ -12,6 +13,56 @@ const LOGOS = [
   { name: 'GlobalLogistics' },
   { name: 'Fintech' },
 ];
+
+const FAQS = [
+  {
+    question: "What is OITS Dhaka's typical project timeline?",
+    answer: "Project timelines vary depending on complexity. A typical MVP development cycle takes between 8 to 12 weeks, while larger enterprise transformations can span 6+ months with continuous agile iterations."
+  },
+  {
+    question: "How do you handle project communication?",
+    answer: "We believe in radical transparency. Every project gets a dedicated Slack channel for real-time chat, bi-weekly video sprint reviews, and access to our project management tools (Jira/Asana) so you can track progress anytime."
+  },
+  {
+    question: "Can you help with post-launch support and scaling?",
+    answer: "Absolutely. We offer flexible post-launch maintenance packages that include monitoring, bug fixes, performance tuning, and continuous feature development to help you scale based on user feedback."
+  },
+  {
+    question: "Do you offer dedicated developer teams?",
+    answer: "Yes, we specialize in high-velocity dedicated teams that integrate seamlessly with your in-house workflow. Our staff augmentation model ensures you get senior engineering talent that scales with your roadmap."
+  },
+  {
+    question: "How do you ensure the security of our data and intellectual property?",
+    answer: "Security is baked into our DNA. We sign strict NDAs, follow OWASP security best practices during development, and implement robust CI/CD pipelines with automated vulnerability scanning."
+  }
+];
+
+// Fix: Use React.FC to ensure proper typing for functional components, specifically to allow the 'key' prop when mapping.
+const AccordionItem: React.FC<{ question: string; answer: string }> = ({ question, answer }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border-b border-slate-100 dark:border-slate-800 last:border-0 overflow-hidden">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between py-6 text-left group transition-all"
+        aria-expanded={isOpen}
+      >
+        <span className="text-lg md:text-xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">
+          {question}
+        </span>
+        <div className={`shrink-0 ml-4 p-2 bg-slate-50 dark:bg-slate-800 rounded-full transition-transform duration-300 ${isOpen ? 'rotate-180 bg-blue-600 text-white' : ''}`}>
+          <ChevronDown size={20} />
+        </div>
+      </button>
+      <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 pb-8' : 'max-h-0'}`}>
+        <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg">
+          {answer}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 const AboutPage: React.FC = () => {
   return (
@@ -30,8 +81,28 @@ const AboutPage: React.FC = () => {
 
       <About />
       
+      {/* FAQ Section */}
+      <section className="py-24 bg-slate-50 dark:bg-slate-900/30">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-6">
+                <HelpCircle size={14} /> Common Questions
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight">Everything you need <br/> to know.</h2>
+            </div>
+            
+            <div className="bg-white dark:bg-slate-900 rounded-[3rem] p-8 md:p-12 border border-slate-100 dark:border-slate-800 shadow-2xl shadow-blue-500/5">
+              {FAQS.map((faq, idx) => (
+                <AccordionItem key={idx} question={faq.question} answer={faq.answer} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Trusted By Section */}
-      <section className="py-20 bg-slate-50 dark:bg-slate-900/50 border-y border-slate-100 dark:border-slate-800">
+      <section className="py-20 bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800">
         <div className="container mx-auto px-6">
           <p className="text-center text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-12">Our Ecosystem Partners</p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-30 grayscale transition-all hover:grayscale-0">

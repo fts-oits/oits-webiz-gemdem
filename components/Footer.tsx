@@ -1,7 +1,8 @@
 import React from 'react';
-import { Terminal, Github, Linkedin, Twitter, Facebook, Sun, Moon } from 'lucide-react';
-import { COMPANY_NAME, NAV_ITEMS } from '../constants';
+import { Terminal, Github, Linkedin, Twitter, Facebook, Sun, Moon, Briefcase } from 'lucide-react';
+import { COMPANY_NAME, NAV_ITEMS, SERVICES } from '../constants';
 import { SectionId } from '../types';
+import { useNavigate } from 'react-router-dom';
 
 interface FooterProps {
   theme: 'light' | 'dark';
@@ -27,14 +28,18 @@ const SocialLink = ({ href, icon: Icon, label }: { href: string; icon: any; labe
 );
 
 export const Footer: React.FC<FooterProps> = ({ theme, toggleTheme }) => {
+  const navigate = useNavigate();
+
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // If it's an anchor on the same page, scroll to it.
     if (href.startsWith('#')) {
       e.preventDefault();
       const id = href.substring(1);
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // If element not on current page, navigate home first
+        navigate(`/${href}`);
       }
     }
   };
@@ -81,16 +86,31 @@ export const Footer: React.FC<FooterProps> = ({ theme, toggleTheme }) => {
                   <a href={item.href} onClick={(e) => handleNavClick(e, item.href)} className="hover:text-blue-500 transition-colors text-slate-400 hover:text-blue-400">{item.label}</a>
                 </li>
               ))}
+              <li>
+                <a href="/about" className="flex items-center gap-2 hover:text-blue-500 transition-colors text-slate-400 hover:text-blue-400 group">
+                   Careers <span className="text-[10px] bg-blue-600/20 text-blue-400 px-1.5 py-0.5 rounded uppercase font-black group-hover:bg-blue-600 group-hover:text-white transition-all">Hiring</span>
+                </a>
+              </li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-white font-bold mb-6">Services</h4>
             <ul className="space-y-4">
-              <li><a href={`#${SectionId.SERVICES}`} onClick={(e) => handleNavClick(e, `#${SectionId.SERVICES}`)} className="hover:text-blue-500 transition-colors text-slate-400 hover:text-blue-400">Web Development</a></li>
-              <li><a href={`#${SectionId.SERVICES}`} onClick={(e) => handleNavClick(e, `#${SectionId.SERVICES}`)} className="hover:text-blue-500 transition-colors text-slate-400 hover:text-blue-400">Mobile Apps</a></li>
-              <li><a href={`#${SectionId.SERVICES}`} onClick={(e) => handleNavClick(e, `#${SectionId.SERVICES}`)} className="hover:text-blue-500 transition-colors text-slate-400 hover:text-blue-400">UI/UX Design</a></li>
-              <li><a href={`#${SectionId.SERVICES}`} onClick={(e) => handleNavClick(e, `#${SectionId.SERVICES}`)} className="hover:text-blue-500 transition-colors text-slate-400 hover:text-blue-400">Cloud Solutions</a></li>
+              {SERVICES.map((service) => (
+                <li key={service.id}>
+                  <a 
+                    href="/services" 
+                    onClick={(e) => {
+                      // Custom behavior: navigate to services page and potentially scroll to section
+                      // For now simple link to services page suffices as requested
+                    }} 
+                    className="hover:text-blue-500 transition-colors text-slate-400 hover:text-blue-400"
+                  >
+                    {service.title}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 

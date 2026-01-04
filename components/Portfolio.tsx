@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { X, Tag, MonitorPlay, RotateCcw, Check, Play, Pause, Volume2, VolumeX, Info, Subtitles } from 'lucide-react';
+import { X, Tag, MonitorPlay, RotateCcw, Check, Play, Pause, Volume2, VolumeX, Info, Subtitles, Linkedin, Twitter, Share2 } from 'lucide-react';
 import { PROJECTS } from '../constants';
 import { Project } from '../types';
 import { Button } from './ui/Button';
@@ -274,6 +274,17 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
 
   const toggleTag = (tag: string) => setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
 
+  const shareProject = (platform: 'linkedin' | 'twitter') => {
+    if (!modalState) return;
+    const url = window.location.href;
+    const text = `Check out this amazing project by OITS Dhaka: ${modalState.project.title}`;
+    const links = {
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
+    };
+    window.open(links[platform], '_blank');
+  };
+
   return (
     <section id="portfolio" className="py-24 bg-slate-50 dark:bg-slate-950 min-h-screen transition-colors duration-300">
       <div className="container mx-auto px-6">
@@ -382,9 +393,21 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
             </div>
             <div className="p-10 md:p-16 overflow-y-auto">
               <div className="max-w-4xl">
-                 <h4 className="text-sm font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                   <Info size={16} /> Detailed Case Study
-                 </h4>
+                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                    <h4 className="text-sm font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em] flex items-center gap-2">
+                      <Info size={16} /> Detailed Case Study
+                    </h4>
+                    <div className="flex items-center gap-4">
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Share Project:</span>
+                      <button onClick={() => shareProject('linkedin')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-blue-600 hover:text-white transition-all">
+                        <Linkedin size={18} />
+                      </button>
+                      <button onClick={() => shareProject('twitter')} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-blue-400 hover:text-white transition-all">
+                        <Twitter size={18} />
+                      </button>
+                    </div>
+                 </div>
+
                  <p className="text-slate-700 dark:text-slate-300 text-xl leading-relaxed mb-10 font-medium">
                    {modalState.project.fullDescription || modalState.project.description}
                  </p>
