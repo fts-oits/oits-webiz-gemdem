@@ -18,12 +18,15 @@ const formatTime = (seconds: number): string => {
 };
 
 const ProjectSkeleton = () => (
-  <div className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm animate-pulse">
-    <div className="aspect-[4/3] bg-slate-200 dark:bg-slate-800"></div>
-    <div className="p-6 space-y-4">
-      <div className="h-4 w-1/4 bg-slate-200 dark:bg-slate-800 rounded"></div>
-      <div className="h-6 w-3/4 bg-slate-200 dark:bg-slate-800 rounded"></div>
-      <div className="space-y-2"><div className="h-3 w-full bg-slate-200 dark:bg-slate-800 rounded"></div></div>
+  <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm">
+    <div className="aspect-[4/3] shimmer"></div>
+    <div className="p-8 space-y-4">
+      <div className="h-6 w-3/4 shimmer rounded-lg"></div>
+      <div className="h-20 w-full shimmer rounded-2xl"></div>
+      <div className="flex gap-2">
+        <div className="h-6 w-16 shimmer rounded-lg"></div>
+        <div className="h-6 w-16 shimmer rounded-lg"></div>
+      </div>
     </div>
   </div>
 );
@@ -193,7 +196,7 @@ const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: a
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-200 dark:bg-slate-800 cursor-pointer" onClick={onClick}>
         {!imageError ? (
           <img 
-            src={project.imageUrl} 
+            src={project.imageUrl || FALLBACK_IMAGE} 
             alt={project.title} 
             loading="lazy"
             onLoad={() => setImageLoaded(true)} 
@@ -207,7 +210,6 @@ const ProjectCard = ({ project, onClick, onViewDemo, highlightedTags, index }: a
           </div>
         )}
         
-        {/* Hover-only buttons */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col gap-4 items-center justify-center bg-slate-900/60 backdrop-blur-sm z-10">
           <button 
             className="bg-white text-slate-900 px-8 py-3 rounded-full font-bold text-xs shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-blue-600 hover:text-white active:scale-95" 
@@ -266,10 +268,28 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
     localStorage.setItem(STORAGE_KEY_TAGS, JSON.stringify(selectedTags));
   }, [selectedCategories, selectedTags]);
 
-  useEffect(() => { setTimeout(() => setLoading(false), 500); }, []);
+  useEffect(() => { setTimeout(() => setLoading(false), 800); }, []);
 
   const categories = useMemo(() => [ALL_CATEGORY, ...Array.from(new Set(PROJECTS.map(p => p.category)))], []);
   const allTags = useMemo(() => Array.from(new Set(PROJECTS.flatMap(p => p.technologies || []))).sort(), []);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    PROJECTS.forEach(p => {
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+    return counts;
+  }, []);
+
+  const tagCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    PROJECTS.forEach(p => {
+      p.technologies?.forEach(t => {
+        counts[t] = (counts[t] || 0) + 1;
+      });
+    });
+    return counts;
+  }, []);
 
   const filteredProjects = useMemo(() => {
     let projs = PROJECTS.filter(p => {
@@ -308,15 +328,21 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
                 <nav className="flex lg:flex-col gap-3 overflow-x-auto no-scrollbar pb-2" role="group" aria-label="Vertical Filter">
                   {categories.map(cat => {
                     const active = cat === ALL_CATEGORY ? selectedCategories.length === 0 : selectedCategories.includes(cat);
+                    const count = cat === ALL_CATEGORY ? PROJECTS.length : categoryCounts[cat];
                     return (
                       <button 
                         key={cat} 
                         onClick={() => toggleCategory(cat)} 
                         aria-pressed={active} 
-                        className={`px-5 py-3 rounded-2xl text-sm font-bold text-left whitespace-nowrap transition-all border outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 active:scale-[0.97] ${active ? 'bg-slate-900 dark:bg-blue-600 text-white shadow-xl border-transparent translate-x-1' : 'bg-white dark:bg-slate-900 text-slate-600 border-slate-200 dark:border-slate-800 hover:border-blue-300'}`}
+                        className={`flex items-center justify-between px-5 py-3 rounded-2xl text-sm font-bold text-left whitespace-nowrap transition-all border outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 active:scale-[0.97] ${active ? 'bg-slate-900 dark:bg-blue-600 text-white shadow-xl border-transparent translate-x-1' : 'bg-white dark:bg-slate-900 text-slate-600 border-slate-200 dark:border-slate-800 hover:border-blue-300'}`}
                       >
-                        {cat}
-                        {active && cat !== ALL_CATEGORY && <Check size={16} className="ml-auto inline-block align-middle" />}
+                        <span className="flex items-center gap-2">
+                           {cat}
+                           {active && cat !== ALL_CATEGORY && <Check size={14} />}
+                        </span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-md font-black ${active ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                           {count}
+                        </span>
                       </button>
                     );
                   })}
@@ -345,14 +371,18 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
                   <div className="flex flex-wrap gap-3" role="group" aria-label="Tech Stack Filter">
                     {allTags.map(tag => {
                       const active = selectedTags.includes(tag);
+                      const count = tagCounts[tag];
                       return (
                         <button 
                           key={tag} 
                           onClick={() => toggleTag(tag)} 
                           aria-pressed={active} 
-                          className={`px-5 py-2 rounded-full text-xs font-black border transition-all active:scale-90 outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 ${active ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:border-blue-400'}`}
+                          className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black border transition-all active:scale-90 outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 ${active ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:border-blue-400'}`}
                         >
                           {tag}
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${active ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'}`}>
+                             {count}
+                          </span>
                         </button>
                       );
                     })}
@@ -361,6 +391,15 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
               )}
               <div key={limit ? 'home' : 'page'} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 min-h-[500px]">
                 {loading ? [1,2,3].map(i => <ProjectSkeleton key={i}/>) : filteredProjects.map((p, i) => <ProjectCard key={p.id} project={p} index={i} highlightedTags={selectedTags} onClick={() => setModalState({ project: p, autoPlay: false })} onViewDemo={() => setModalState({ project: p, autoPlay: true })} />)}
+                {!loading && filteredProjects.length === 0 && (
+                   <div className="col-span-full py-32 text-center bg-white dark:bg-slate-900 rounded-[3rem] border border-dashed border-slate-200 dark:border-slate-800">
+                      <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <X className="text-slate-300" size={32} />
+                      </div>
+                      <p className="text-xl font-bold text-slate-400">No projects match the selected filters.</p>
+                      <button onClick={() => {setSelectedCategories([]); setSelectedTags([]);}} className="mt-4 text-blue-600 font-black uppercase text-xs tracking-widest hover:underline">Clear all filters</button>
+                   </div>
+                )}
               </div>
            </div>
         </div>
@@ -380,7 +419,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ limit }) => {
               ) : (
                 <div className="relative w-full h-full group/modal-img">
                   <img 
-                    src={modalState.project.imageUrl} 
+                    src={modalState.project.imageUrl || FALLBACK_IMAGE} 
                     alt={modalState.project.title} 
                     className="w-full h-full object-cover"
                     onError={(e) => {

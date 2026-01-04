@@ -38,7 +38,6 @@ export const Footer: React.FC<FooterProps> = ({ theme, toggleTheme }) => {
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       } else {
-        // If element not on current page, navigate home first
         navigate(`/${href}`);
       }
     }
@@ -100,11 +99,7 @@ export const Footer: React.FC<FooterProps> = ({ theme, toggleTheme }) => {
               {SERVICES.map((service) => (
                 <li key={service.id}>
                   <a 
-                    href="/services" 
-                    onClick={(e) => {
-                      // Custom behavior: navigate to services page and potentially scroll to section
-                      // For now simple link to services page suffices as requested
-                    }} 
+                    href={`/services#${service.id}`} 
                     className="hover:text-blue-500 transition-colors text-slate-400 hover:text-blue-400"
                   >
                     {service.title}

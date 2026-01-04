@@ -197,13 +197,13 @@ const AboutPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Work With Us Section - Robust Color Contrast */}
-      <section className="py-24 bg-slate-900 text-white">
+      {/* Work With Us Section - Solid contrast with text-slate-950 for visibility in light mode */}
+      <section className="py-24 bg-slate-900 dark:bg-slate-800 text-white">
         <div className="container mx-auto px-6 text-center">
            <h3 className="text-3xl md:text-5xl font-black mb-10 tracking-tight">Want to join our mission?</h3>
            <Link to="/contact">
-             <Button size="lg" variant="primary" className="bg-white text-slate-950 hover:bg-slate-100 border-none transition-all shadow-xl px-16">
-               <span className="text-slate-950 font-black">Work With Us</span>
+             <Button size="lg" className="bg-white text-slate-950 hover:bg-slate-100 border-none transition-all shadow-2xl px-16 group active:scale-95">
+               <span className="font-black">Work With Us</span>
              </Button>
            </Link>
         </div>

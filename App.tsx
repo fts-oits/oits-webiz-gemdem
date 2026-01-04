@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { AiAssistant } from './components/AiAssistant';
 import { CookieConsent } from './components/CookieConsent';
+import { ScrollToTopButton } from './components/ScrollToTopButton';
 import { COMPANY_NAME, TAGLINE } from './constants';
 
 // Lazy load pages for performance
@@ -68,6 +69,7 @@ function AppContent() {
       </main>
       <Footer theme={theme} toggleTheme={toggleTheme} />
       <AiAssistant />
+      <ScrollToTopButton />
       <CookieConsent />
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Terminal as TerminalIcon, Zap } from 'lucide-react';
+import { ArrowRight, Terminal as TerminalIcon, Zap, PlayCircle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { TAGLINE } from '../constants';
 
@@ -131,10 +131,11 @@ export const Hero: React.FC = () => {
                   <Button 
                     variant="outline" 
                     size="lg" 
-                    className="transition-all duration-300 hover:scale-105 hover:bg-white/10 text-white border-white/50 active:scale-95 w-full sm:w-auto border-2"
-                    aria-label="View our portfolio"
+                    className="group transition-all duration-300 hover:scale-105 hover:bg-white/10 text-white border-white/50 active:scale-95 w-full sm:w-auto border-2 flex items-center gap-2"
+                    aria-label="Request a demo"
                   >
-                    Our Portfolio
+                    <PlayCircle size={20} className="transition-transform group-hover:rotate-12" />
+                    Request a Demo
                   </Button>
                 </Link>
               </div>
